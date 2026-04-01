@@ -1,0 +1,601 @@
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700&display=swap");
+
+:root {
+  --sky-top: #4bc0ff;
+  --sky-bottom: #6ef8c9;
+  --sunny-yellow: #ffd84d;
+  --tangerine: #ff8c3a;
+  --bubble-blue: #2f6df5;
+  --melon: #ff5f8d;
+  --mint: #17c79d;
+  --text-dark: #15324b;
+  --card-bg: rgba(255, 255, 255, 0.92);
+  --shadow-soft: 0 16px 32px rgba(19, 38, 58, 0.18);
+  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Nunito", "Trebuchet MS", sans-serif;
+  color: var(--text-dark);
+  background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: "Baloo 2", "Trebuchet MS", sans-serif;
+}
+
+p {
+  margin: 0;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.app-shell {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding: 1.25rem;
+}
+
+.bg-stars,
+.bg-balloons {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bg-stars {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.65) 1px, transparent 1px);
+  background-size: 36px 36px;
+  opacity: 0.5;
+}
+
+.bg-balloons::before,
+.bg-balloons::after {
+  content: "";
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  filter: blur(0.4px);
+  opacity: 0.55;
+  animation: float 6s ease-in-out infinite;
+}
+
+.bg-balloons::before {
+  top: -70px;
+  right: -60px;
+  background: radial-gradient(circle at 30% 30%, #fff2a1, #ff8b2f);
+}
+
+.bg-balloons::after {
+  bottom: -80px;
+  left: -80px;
+  background: radial-gradient(circle at 30% 30%, #9df7ff, #3d88ff);
+  animation-delay: 2s;
+}
+
+.top-nav {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-soft);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.brand-badge {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(130deg, var(--melon), var(--sunny-yellow));
+  box-shadow: 0 0 0 6px rgba(255, 95, 141, 0.15);
+}
+
+.brand-text {
+  font-family: "Baloo 2", "Trebuchet MS", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.nav-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.55rem 0.9rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  background: rgba(30, 129, 255, 0.11);
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.nav-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(30, 129, 255, 0.2);
+}
+
+.nav-btn.active {
+  color: #fff;
+  background: linear-gradient(120deg, var(--bubble-blue), #2f9aff);
+}
+
+main {
+  position: relative;
+  z-index: 1;
+  margin-top: 1rem;
+}
+
+.page {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero-card {
+  padding: 1.8rem;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(130deg, #ffffff, #fff4dd);
+  box-shadow: var(--shadow-soft);
+  display: grid;
+  gap: 0.85rem;
+}
+
+.hero-card h1 {
+  font-size: clamp(1.8rem, 3.4vw, 2.9rem);
+  line-height: 1.1;
+}
+
+.kicker {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-weight: 700;
+  background: rgba(23, 199, 157, 0.17);
+}
+
+.difficulty-pill {
+  width: fit-content;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255, 140, 58, 0.18);
+  font-weight: 700;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.cta-btn,
+.primary-btn,
+.secondary-btn,
+.text-btn {
+  border: 0;
+  border-radius: 14px;
+  padding: 0.75rem 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.cta-btn:hover,
+.primary-btn:hover,
+.secondary-btn:hover,
+.text-btn:hover {
+  transform: translateY(-2px);
+}
+
+.cta-btn.play,
+.primary-btn {
+  color: #fff;
+  background: linear-gradient(125deg, var(--bubble-blue), #27a3ff);
+  box-shadow: 0 12px 20px rgba(47, 109, 245, 0.28);
+}
+
+.cta-btn.test {
+  color: #fff;
+  background: linear-gradient(125deg, var(--melon), var(--tangerine));
+  box-shadow: 0 12px 20px rgba(255, 95, 141, 0.25);
+}
+
+.secondary-btn {
+  color: var(--text-dark);
+  background: linear-gradient(125deg, #fff, #d8f6ff);
+}
+
+.text-btn {
+  justify-self: start;
+  background: transparent;
+  color: var(--bubble-blue);
+  padding: 0.2rem 0.4rem;
+}
+
+.feature-grid {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.feature-card,
+.game-card,
+.test-card,
+.test-setup,
+.summary-card,
+.recent-result-card,
+.progress-card,
+.about-card,
+.empty-state {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.feature-card h3,
+.game-card h3,
+.summary-card h3,
+.recent-result-card h3,
+.about-card h2 {
+  margin-bottom: 0.5rem;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.section-head h2 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.difficulty-selector {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.difficulty-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.5rem 0.8rem;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+}
+
+.difficulty-btn.active {
+  color: #fff;
+  background: linear-gradient(120deg, #ff8f1f, #ff5f8d);
+}
+
+.games-grid {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.game-card {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.game-card-stats {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  font-weight: 700;
+  color: #22527d;
+}
+
+.game-arena {
+  display: grid;
+  gap: 1rem;
+}
+
+.score-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.7rem;
+}
+
+.score-strip > div {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--radius-md);
+  padding: 0.7rem;
+  text-align: center;
+  box-shadow: var(--shadow-soft);
+}
+
+.label {
+  display: block;
+  font-size: 0.85rem;
+  color: #2f5f85;
+}
+
+.score-strip strong {
+  font-size: 1.3rem;
+}
+
+.prompt-card {
+  display: grid;
+  gap: 0.7rem;
+  background: linear-gradient(130deg, #fff, #f6fff4);
+  border-radius: var(--radius-xl);
+  padding: 1rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.target-text {
+  margin: 0;
+  padding: 0.8rem;
+  border-radius: var(--radius-md);
+  background: rgba(36, 142, 255, 0.09);
+  font-family: "Baloo 2", "Trebuchet MS", sans-serif;
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+}
+
+input,
+textarea {
+  width: 100%;
+  border: 2px solid rgba(21, 50, 75, 0.2);
+  border-radius: 14px;
+  padding: 0.7rem 0.8rem;
+  background: #fff;
+}
+
+input:focus,
+textarea:focus {
+  outline: 3px solid rgba(47, 109, 245, 0.25);
+  border-color: #2f6df5;
+}
+
+.arena-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.feedback {
+  font-weight: 800;
+  color: #1f628f;
+}
+
+.progress-note {
+  color: #376183;
+  font-size: 0.95rem;
+}
+
+.test-setup {
+  max-width: 620px;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.setup-note {
+  font-weight: 700;
+}
+
+.timer-badge {
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(120deg, #ff6a3b, #ff9b2a);
+}
+
+.test-card {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.passage {
+  margin: 0;
+  padding: 0.8rem;
+  border-radius: var(--radius-md);
+  background: rgba(37, 152, 255, 0.07);
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+.passage .pending {
+  color: #54748e;
+}
+
+.passage .correct {
+  background: rgba(23, 199, 157, 0.27);
+  color: #124a3f;
+}
+
+.passage .wrong {
+  background: rgba(255, 95, 141, 0.25);
+  color: #7f1737;
+}
+
+textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.test-live-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  font-weight: 700;
+}
+
+.result-screen {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.result-card {
+  max-width: 760px;
+  padding: 1.2rem;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(130deg, #fffef1, #dff6ff);
+  box-shadow: var(--shadow-soft);
+}
+
+.result-card h3 {
+  font-size: clamp(1.6rem, 2.6vw, 2rem);
+}
+
+.result-name {
+  margin-top: 0.4rem;
+  font-weight: 700;
+}
+
+.result-grid {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.result-grid > div {
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.82);
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.result-grid span {
+  font-size: 0.86rem;
+  color: #335572;
+}
+
+.result-grid strong {
+  font-family: "Baloo 2", "Trebuchet MS", sans-serif;
+  font-size: 1.15rem;
+}
+
+.motivation {
+  margin-top: 0.85rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0f5775;
+}
+
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.error-text {
+  margin-top: 0.4rem;
+  color: #971f47;
+  font-weight: 700;
+}
+
+.progress-grid {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.progress-card p {
+  margin-top: 0.45rem;
+  font-family: "Baloo 2", "Trebuchet MS", sans-serif;
+  font-size: 1.45rem;
+}
+
+.games-stats-table {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  box-shadow: var(--shadow-soft);
+  overflow-x: auto;
+}
+
+.games-stats-table table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.games-stats-table th,
+.games-stats-table td {
+  text-align: left;
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid rgba(50, 85, 115, 0.15);
+}
+
+.games-stats-table th {
+  color: #2d5271;
+  font-family: "Baloo 2", "Trebuchet MS", sans-serif;
+}
+
+.about-card ul {
+  margin: 0.8rem 0 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.empty-state {
+  max-width: 520px;
+  display: grid;
+  gap: 0.8rem;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(12px);
+  }
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    padding: 0.8rem;
+  }
+
+  .top-nav {
+    padding: 0.75rem;
+  }
+
+  .hero-card {
+    padding: 1.2rem;
+  }
+}
