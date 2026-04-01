@@ -2096,3 +2096,129 @@ body.reduced-motion .finger {
 .hand.typing {
   animation: handPress 0.1s ease;
 }
+
+/* ==============================
+   TYPING HANDS OVERLAY
+   Positioned OVER the keyboard
+   ============================== */
+
+.typing-hands-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  pointer-events: none;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.virtual-keyboard {
+  position: relative;
+}
+
+.hands-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Individual finger styling */
+.overlay-finger {
+  transition: all 0.15s ease;
+}
+
+.overlay-finger.active {
+  animation: fingerPoint 0.6s ease infinite;
+}
+
+.overlay-finger.active .finger-glow {
+  animation: glowPulse 1s ease infinite;
+}
+
+.overlay-finger.pressed {
+  transform: translateY(2px);
+}
+
+@keyframes fingerPoint {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Hint text below hands */
+.hand-hint {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+  animation: hintPop 0.3s ease;
+}
+
+.hand-hint strong {
+  color: #ff6b6b;
+}
+
+.key-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #2f6df5, #27a3ff);
+  color: white;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  margin-left: 0.3rem;
+  min-width: 24px;
+  text-align: center;
+}
+
+@keyframes hintPop {
+  from { transform: translateX(-50%) scale(0.8); opacity: 0; }
+  to { transform: translateX(-50%) scale(1); opacity: 1; }
+}
+
+/* Make keyboard container position relative for overlay */
+.virtual-keyboard {
+  position: relative;
+  overflow: visible;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .typing-hands-overlay {
+    height: 100px;
+  }
+  
+  .hand-hint {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .typing-hands-overlay {
+    height: 80px;
+  }
+  
+  .hand-hint {
+    font-size: 0.7rem;
+  }
+}
+
+/* Reduced motion support */
+body.reduced-motion .overlay-finger.active {
+  animation: none;
+}
+
+body.reduced-motion .finger-glow {
+  animation: none;
+}

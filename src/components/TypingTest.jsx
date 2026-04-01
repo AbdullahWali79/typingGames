@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import DifficultySelector from "./DifficultySelector";
 import VirtualKeyboard from "./VirtualKeyboard";
 import Mascot from "./Mascot";
-import TypingHands from "./TypingHands";
+import TypingHandsOverlay from "./TypingHandsOverlay";
+import { getHandsEnabled } from "../handsSettings";
 import Confetti from "./Confetti";
 import { DIFFICULTY_LEVELS, TEST_PASSAGES, TEST_STORIES } from "../data";
 import {
@@ -40,6 +41,7 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
   const textAreaRef = useRef(null);
   const startTimeRef = useRef(null);
   const reducedMotion = useRef(getReducedMotion());
+  const handsEnabled = useRef(getHandsEnabled());
 
   useEffect(() => {
     if (status !== "running") return;
@@ -302,11 +304,12 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
           layout="full"
         />
         
-        <TypingHands
-          nextChar={passage[typedText.length]}
-          justPressedChar={lastPressedChar}
-          isVisible={status === "running"}
-        />
+        {handsEnabled.current && (
+          <TypingHandsOverlay
+            nextChar={passage[typedText.length]}
+            justPressedChar={lastPressedChar}
+          />
+        )}
       </div>
     </section>
   );

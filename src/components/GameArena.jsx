@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import DifficultySelector from "./DifficultySelector";
 import VirtualKeyboard from "./VirtualKeyboard";
 import Mascot from "./Mascot";
-import TypingHands from "./TypingHands";
+import TypingHandsOverlay from "./TypingHandsOverlay";
+import { getHandsEnabled } from "../handsSettings";
 import ComboDisplay from "./ComboDisplay";
 import Confetti from "./Confetti";
 import TutorialModal from "./TutorialModal";
@@ -81,6 +82,7 @@ export default function GameArena({
   const metricsRef = useRef(metrics);
   const promptIssuedAtRef = useRef(Date.now());
   const reducedMotion = useRef(getReducedMotion());
+  const handsEnabled = useRef(getHandsEnabled());
 
   useEffect(() => {
     metricsRef.current = metrics;
@@ -493,12 +495,11 @@ export default function GameArena({
             layout="full"
           />
           
-          {/* Virtual Hands */}
-          {status === "running" && (
-            <TypingHands
+          {/* Virtual Hands Overlay */}
+          {status === "running" && handsEnabled.current && (
+            <TypingHandsOverlay
               nextChar={targetPrompt[entry.length]}
               justPressedChar={lastPressedChar}
-              isVisible={true}
             />
           )}
           <div className="arena-actions">

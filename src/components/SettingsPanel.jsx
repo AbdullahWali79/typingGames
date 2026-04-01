@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
 import { getReducedMotion, setReducedMotion, getSoundEnabled, setSoundEnabled } from '../storage';
 import { downloadProgressReport } from '../wpmHistory';
+import { getHandsEnabled, setHandsEnabled } from '../handsSettings';
 
 export default function SettingsPanel() {
   const [reducedMotion, setReducedMotionState] = useState(false);
   const [soundEnabled, setSoundEnabledState] = useState(true);
+  const [handsEnabled, setHandsEnabledState] = useState(true);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   useEffect(() => {
     setReducedMotionState(getReducedMotion());
     setSoundEnabledState(getSoundEnabled());
+    setHandsEnabledState(getHandsEnabled());
   }, []);
 
   const handleReducedMotionChange = (e) => {
@@ -29,6 +32,12 @@ export default function SettingsPanel() {
     const value = e.target.checked;
     setSoundEnabledState(value);
     setSoundEnabled(value);
+  };
+
+  const handleHandsChange = (e) => {
+    const value = e.target.checked;
+    setHandsEnabledState(value);
+    setHandsEnabled(value);
   };
 
   const handleExport = () => {
@@ -74,6 +83,18 @@ export default function SettingsPanel() {
           <span className="toggle-label">
             <span className="toggle-title">Sound Effects</span>
             <span className="toggle-desc">Enable typing sounds and music</span>
+          </span>
+        </label>
+
+        <label className="setting-toggle">
+          <input
+            type="checkbox"
+            checked={handsEnabled}
+            onChange={handleHandsChange}
+          />
+          <span className="toggle-label">
+            <span className="toggle-title">🙌 Typing Hands</span>
+            <span className="toggle-desc">Show animated hands that guide finger placement</span>
           </span>
         </label>
       </div>
