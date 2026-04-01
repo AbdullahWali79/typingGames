@@ -1,4 +1,5 @@
 const STORAGE_KEY = "typingGames.kids.v1";
+const AUTOSAVE_KEY = "typingGames.kids.autosave";
 
 const defaultState = {
   bestWpm: 0,
@@ -8,7 +9,11 @@ const defaultState = {
   lastPlayedGame: "",
   favoriteGame: "",
   totalGamesPlayed: 0,
-  gameStats: {}
+  gameStats: {},
+  combo: 0,
+  maxCombo: 0,
+  reducedMotion: false,
+  soundEnabled: true
 };
 
 export function getProgressSnapshot() {
@@ -51,6 +56,86 @@ export function saveTypingTestResult(result) {
   state.bestWpm = Math.max(state.bestWpm, result.wpm);
   state.bestAccuracy = Math.max(state.bestAccuracy, result.accuracy);
   writeState(state);
+}
+
+// Combo system
+export function incrementCombo() {
+  const state = readState();
+  state.combo = (state.combo || 0) + 1;
+  state.maxCombo = Math.max(state.maxCombo || 0, state.combo);
+  writeState(state);
+  return state.combo;
+}
+
+export function resetCombo() {
+  const state = readState();
+  state.combo = 0;
+  writeState(state);
+  return 0;
+}
+
+export function getCombo() {
+  const state = readState();
+  return state.combo || 0;
+}
+
+export function getMaxCombo() {
+  const state = readState();
+  return state.maxCombo || 0;
+}
+
+// Accessibility preferences
+export function setReducedMotion(enabled) {
+  const state = readState();
+  state.reducedMotion = enabled;
+  writeState(state);
+}
+
+export function getReducedMotion() {
+  const state = readState();
+  return state.reducedMotion || false;
+}
+
+export function setSoundEnabled(enabled) {
+  const state = readState();
+  state.soundEnabled = enabled;
+  writeState(state);
+}
+
+export function getSoundEnabled() {
+  const state = readState();
+  return state.soundEnabled !== false;
+}
+
+// Auto-save game progress
+export function autoSaveProgress(gameId, progress) {
+  const data = {
+    gameId,
+    progress,
+    timestamp: Date.now()
+  };
+  localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
+}
+
+export function getAutoSavedProgress() {
+  try {
+    const data = localStorage.getItem(AUTOSAVE_KEY);
+    if (!data) return null;
+    
+    const parsed = JSON.parse(data);
+    // Auto-save expires after 24 hours
+    if (Date.now() - parsed.timestamp > 24 * 60 * 60 * 1000) {
+      clearAutoSave();
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+export function clearAutoSave() {
+  localStorage.removeItem(AUTOSAVE_KEY);
 }
 
 function getFavoriteGameId(gameStats, fallback) {

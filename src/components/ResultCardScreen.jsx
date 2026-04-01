@@ -1,16 +1,20 @@
 import { useRef, useState } from "react";
 import { toPng } from "html-to-image";
 import { formatResultDate } from "../utils";
+import { getPersonalBest } from '../wpmHistory';
 
 export default function ResultCardScreen({ result, onTakeAnother, onOpenProgress }) {
   const cardRef = useRef(null);
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState("");
 
+  const personalBest = getPersonalBest();
+  const isNewPersonalBest = result && personalBest && 
+    result.wpm >= personalBest.wpm && 
+    new Date(result.date).getTime() >= new Date(personalBest.date).getTime();
+
   async function downloadPng() {
-    if (!cardRef.current || !result) {
-      return;
-    }
+    if (!cardRef.current || !result) return;
 
     try {
       setDownloading(true);
@@ -51,16 +55,33 @@ export default function ResultCardScreen({ result, onTakeAnother, onOpenProgress
           <h2>Typing Test Result</h2>
           <p>Your latest card is ready to download.</p>
         </div>
+        {isNewPersonalBest && (
+          <div className="personal-best-badge">
+            🏆 New Personal Best!
+          </div>
+        )}
       </div>
 
       <div className="result-screen">
-        <article className="result-card" ref={cardRef}>
+        <article className={`result-card ${isNewPersonalBest ? 'new-record' : ''}`} ref={cardRef}>
           <h3>Typing Test Result</h3>
+          
+          {isNewPersonalBest && (
+            <div className="new-best-banner">
+              🎉 NEW PERSONAL BEST! 🎉
+            </div>
+          )}
+          
           <p className="result-name">Name: {result.name}</p>
           <div className="result-grid">
             <div>
               <span>WPM</span>
               <strong>{result.wpm}</strong>
+              {personalBest && personalBest.wpm !== result.wpm && (
+                <small className="comparison">
+                  {result.wpm > personalBest.wpm ? '+' : ''}{result.wpm - personalBest.wpm} from best
+                </small>
+              )}
             </div>
             <div>
               <span>Accuracy</span>
@@ -84,6 +105,12 @@ export default function ResultCardScreen({ result, onTakeAnother, onOpenProgress
             </div>
           </div>
           <p className="motivation">{result.message}</p>
+          <div className="result-footer">
+            <p className="result-footer-credit">Developed by M.Abdullah</p>
+            <p className="result-footer-line">
+              Empowering young learners through fun and focused typing practice.
+            </p>
+          </div>
         </article>
 
         <div className="result-actions">

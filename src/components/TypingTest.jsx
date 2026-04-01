@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import DifficultySelector from "./DifficultySelector";
 import VirtualKeyboard from "./VirtualKeyboard";
+import Mascot from "./Mascot";
+import Confetti from "./Confetti";
 import { DIFFICULTY_LEVELS, TEST_PASSAGES, TEST_STORIES } from "../data";
 import {
   calculateAccuracy,
@@ -11,6 +13,16 @@ import {
   getTypingLevel,
   round
 } from "../utils";
+import { recordTypingSession } from '../keyboardStats';
+import { addWpmEntry, compareToPersonalBest } from '../wpmHistory';
+import { updateStreak } from '../achievements';
+import {
+  playTypeSound,
+  playSuccessSound,
+  playCompleteSound,
+  resumeAudioContext
+} from '../sound';
+import { getReducedMotion } from '../storage';
 
 export default function TypingTest({ difficulty, onDifficultyChange, onComplete }) {
   const settings = DIFFICULTY_LEVELS[difficulty] ?? DIFFICULTY_LEVELS.Beginner;
@@ -20,15 +32,20 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
   const [passage, setPassage] = useState("");
   const [typedText, setTypedText] = useState("");
   const [timeLeft, setTimeLeft] = useState(settings.testTime);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [personalBestComparison, setPersonalBestComparison] = useState(null);
+  
   const textAreaRef = useRef(null);
+  const startTimeRef = useRef(null);
+  const reducedMotion = useRef(getReducedMotion());
 
   useEffect(() => {
-    if (status !== "running") {
-      return;
-    }
+    if (status !== "running") return;
+    
     const timer = setInterval(() => {
       setTimeLeft((current) => Math.max(current - 1, 0));
     }, 1000);
+    
     return () => clearInterval(timer);
   }, [status]);
 
@@ -50,17 +67,42 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
     }
   }, [status]);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.code === "Space" && status === "setup") {
+        e.preventDefault();
+        startTest();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [status]);
+
   const liveAccuracy = useMemo(() => {
     const correct = countMatchingCharacters(passage.slice(0, typedText.length), typedText);
     return round(calculateAccuracy(correct, typedText.length));
   }, [passage, typedText]);
 
+  const liveWpm = useMemo(() => {
+    if (!startTimeRef.current) return 0;
+    const elapsed = (Date.now() - startTimeRef.current) / 1000;
+    const correct = countMatchingCharacters(passage.slice(0, typedText.length), typedText);
+    return round(calculateWpm(correct, elapsed));
+  }, [passage, typedText]);
+
   function startTest() {
+    resumeAudioContext();
+    
     const source = contentMode === "story" ? TEST_STORIES : TEST_PASSAGES;
     setPassage(getRandomPassage(source, difficulty));
     setTypedText("");
     setTimeLeft(settings.testTime);
+    startTimeRef.current = Date.now();
     setStatus("running");
+    updateStreak();
+    setPersonalBestComparison(null);
   }
 
   function finishTest() {
@@ -71,6 +113,25 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
     const accuracy = round(calculateAccuracy(correctChars, typedText.length));
     const wpm = round(calculateWpm(correctChars, testDuration));
     const level = getTypingLevel(wpm);
+    
+    // Track keyboard stats
+    recordTypingSession(passage, typedText);
+    
+    // Add to WPM history
+    addWpmEntry(wpm, accuracy, contentMode);
+    
+    // Check personal best
+    const comparison = compareToPersonalBest(wpm, accuracy);
+    setPersonalBestComparison(comparison);
+    
+    // Play sounds
+    if (comparison.isNewBest) {
+      playCompleteSound();
+      if (!reducedMotion.current) {
+        setShowConfetti(true);
+      }
+    }
+    
     const result = {
       name: name.trim() || "Guest",
       wpm,
@@ -81,11 +142,29 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
       difficulty,
       testMode: contentMode,
       date: new Date().toISOString(),
-      message: getMotivationMessage(wpm, accuracy)
+      message: getMotivationMessage(wpm, accuracy),
+      isNewBest: comparison.isNewBest
     };
 
     setStatus("setup");
     onComplete(result);
+  }
+
+  function handleTyping(e) {
+    const newText = e.target.value;
+    const addedChar = newText[newText.length - 1];
+    
+    if (newText.length > typedText.length && addedChar) {
+      playTypeSound();
+      
+      // Check if correct
+      const expectedChar = passage[newText.length - 1];
+      if (addedChar.toLowerCase() === expectedChar?.toLowerCase()) {
+        // Could add visual feedback for correct char
+      }
+    }
+    
+    setTypedText(newText);
   }
 
   function renderPassage() {
@@ -107,6 +186,7 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
   }
 
   function addVirtualCharacter(character) {
+    playTypeSound();
     setTypedText((previous) => `${previous}${character}`);
     textAreaRef.current?.focus();
   }
@@ -136,6 +216,13 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
+          
+          {personalBestComparison?.previousBest && (
+            <div className="personal-best-info">
+              <p>🏆 Your personal best: {personalBestComparison.previousBest.wpm} WPM</p>
+            </div>
+          )}
+          
           <div className="mode-selector">
             <button
               type="button"
@@ -159,6 +246,9 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
           <button className="primary-btn" type="button" onClick={startTest}>
             Start Typing Test
           </button>
+          <p className="keyboard-shortcuts-hint">
+            💡 Press <kbd>Space</kbd> to start quickly
+          </p>
         </div>
       </section>
     );
@@ -166,6 +256,10 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
 
   return (
     <section className="page">
+      <Confetti active={showConfetti} duration={5000} />
+      
+      <Mascot status={status} />
+      
       <div className="section-head">
         <div>
           <h2>Typing Test In Progress</h2>
@@ -179,13 +273,14 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
         <textarea
           ref={textAreaRef}
           value={typedText}
-          onChange={(event) => setTypedText(event.target.value)}
+          onChange={handleTyping}
           placeholder="Start typing the text shown above..."
           autoFocus
         />
         <div className="test-live-stats">
           <span>Typed: {typedText.length} chars</span>
           <span>Live Accuracy: {liveAccuracy}%</span>
+          <span>Live WPM: {liveWpm}</span>
           <span>Difficulty: {difficulty}</span>
         </div>
         <button className="secondary-btn" type="button" onClick={finishTest}>

@@ -3,10 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Typing Adventure Kids</title>
+    
+    <!-- SEO Meta Tags -->
+    <title>Typing Adventure Kids - Fun Typing Games for Children</title>
+    <meta name="description" content="Free typing games for kids ages 5-12. Build speed, accuracy, and confidence with fun games, tests, and progress tracking. No login required!" />
+    <meta name="keywords" content="typing games for kids, typing practice children, free typing test, keyboard skills, educational games" />
+    <meta name="author" content="Typing Adventure Kids" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Typing Adventure Kids - Fun Typing Games" />
+    <meta property="og:description" content="Free typing games for kids! No login needed. Track progress and improve speed." />
+    <meta property="og:type" content="website" />
+    
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#4bc0ff" />
+    <meta name="msapplication-TileColor" content="#4bc0ff" />
+    
+    <!-- Favicon using emoji (SVG data URI) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>" />
+    
+    <!-- Preconnect to Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Loading spinner shown while React loads -->
+      <div class="initial-loader">
+        <div class="loader-spinner"></div>
+        <p>Loading Typing Adventure...</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
