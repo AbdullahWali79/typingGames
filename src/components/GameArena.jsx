@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import DifficultySelector from "./DifficultySelector";
 import VirtualKeyboard from "./VirtualKeyboard";
 import Mascot from "./Mascot";
+import TypingHands from "./TypingHands";
 import ComboDisplay from "./ComboDisplay";
 import Confetti from "./Confetti";
 import TutorialModal from "./TutorialModal";
@@ -74,6 +75,7 @@ export default function GameArena({
   const [justMadeMistake, setJustMadeMistake] = useState(false);
   const [newAchievements, setNewAchievements] = useState([]);
   const [justUnlockedAchievement, setJustUnlockedAchievement] = useState(false);
+  const [lastPressedChar, setLastPressedChar] = useState(null);
   
   const inputRef = useRef(null);
   const metricsRef = useRef(metrics);
@@ -353,7 +355,11 @@ export default function GameArena({
   function addVirtualCharacter(character) {
     playTypeSound();
     setEntry((previous) => `${previous}${character}`);
+    setLastPressedChar(character);
     inputRef.current?.focus();
+    
+    // Clear pressed animation after short delay
+    setTimeout(() => setLastPressedChar(null), 150);
   }
 
   function removeVirtualCharacter() {
@@ -486,6 +492,15 @@ export default function GameArena({
             theme={game.promptStyle}
             layout="full"
           />
+          
+          {/* Virtual Hands */}
+          {status === "running" && (
+            <TypingHands
+              nextChar={targetPrompt[entry.length]}
+              justPressedChar={lastPressedChar}
+              isVisible={true}
+            />
+          )}
           <div className="arena-actions">
             <button className="secondary-btn" type="button" onClick={submitEntry} disabled={status !== "running"}>
               Submit

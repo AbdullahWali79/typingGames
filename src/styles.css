@@ -1884,3 +1884,215 @@ body.reduced-motion .mascot-container {
   align-items: center;
   gap: 0.5rem;
 }
+
+/* ==============================
+   TYPING HANDS - Virtual Hands Display
+   ============================== */
+
+.typing-hands-container {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(245, 250, 255, 0.9));
+  border-radius: var(--radius-xl);
+  padding: 1rem;
+  margin: 1rem 0;
+  box-shadow: var(--shadow-soft);
+}
+
+.typing-hands-svg {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Hand styling */
+.hand {
+  transition: opacity 0.3s ease;
+}
+
+.hand:not(.active) {
+  opacity: 0.6;
+}
+
+.hand.active {
+  opacity: 1;
+}
+
+/* Palm */
+.palm {
+  fill: #f4d03f;
+  stroke: #d4ac0d;
+  stroke-width: 0.5;
+}
+
+.left-hand .palm {
+  fill: url(#leftHandGradient);
+}
+
+.right-hand .palm {
+  fill: url(#rightHandGradient);
+}
+
+/* Finger styling */
+.finger {
+  transition: all 0.15s ease;
+}
+
+.finger-body {
+  fill: #f8e8b8;
+  stroke: #d4ac0d;
+  stroke-width: 0.3;
+  transition: all 0.15s ease;
+}
+
+.finger-tip {
+  fill: #f4d03f;
+  stroke: #d4ac0d;
+  stroke-width: 0.3;
+  transition: all 0.15s ease;
+}
+
+.finger-label {
+  fill: rgba(0, 0, 0, 0.4);
+  font-family: "Nunito", sans-serif;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+/* Active finger (next key to press) */
+.finger.active .finger-body {
+  fill: #ff6b6b;
+  stroke: #ee5a5a;
+  filter: drop-shadow(0 0 4px rgba(255, 107, 107, 0.6));
+}
+
+.finger.active .finger-tip {
+  fill: #ff8787;
+  stroke: #ff6b6b;
+  r: 4;
+  animation: fingerPulse 1s ease infinite;
+}
+
+/* Pressed finger (currently typing) */
+.finger.pressed .finger-body {
+  fill: #51cf66;
+  stroke: #37b24d;
+  transform: translateY(2px);
+}
+
+.finger.pressed .finger-tip {
+  fill: #69db7c;
+  stroke: #51cf66;
+  r: 3.5;
+}
+
+@keyframes fingerPulse {
+  0%, 100% { 
+    r: 4;
+    filter: drop-shadow(0 0 2px rgba(255, 107, 107, 0.4));
+  }
+  50% { 
+    r: 5;
+    filter: drop-shadow(0 0 6px rgba(255, 107, 107, 0.8));
+  }
+}
+
+/* Instruction text below hands */
+.hands-instruction {
+  text-align: center;
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.finger-hint {
+  font-size: 0.95rem;
+  color: var(--text-dark);
+}
+
+.finger-hint strong {
+  color: #ff6b6b;
+  font-weight: 800;
+}
+
+.next-key {
+  display: inline-block;
+  background: linear-gradient(135deg, #2f6df5, #27a3ff);
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* Hand position guide overlay */
+.hand-position-guide {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.typing-hands-container:hover .hand-position-guide {
+  opacity: 1;
+}
+
+/* SVG Gradients */
+.typing-hands-svg defs {
+  display: none;
+}
+
+/* Reduced motion support */
+body.reduced-motion .finger.active .finger-tip {
+  animation: none;
+}
+
+body.reduced-motion .finger {
+  transition: none;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .typing-hands-container {
+    padding: 0.6rem;
+  }
+  
+  .typing-hands-svg {
+    max-width: 100%;
+  }
+  
+  .finger-label {
+    font-size: 2.5px;
+  }
+  
+  .hands-instruction {
+    font-size: 0.85rem;
+  }
+  
+  .next-key {
+    font-size: 1rem;
+    padding: 0.15rem 0.4rem;
+  }
+}
+
+/* Hand animation for typing feedback */
+@keyframes handPress {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+  100% { transform: translateY(0); }
+}
+
+.hand.typing {
+  animation: handPress 0.1s ease;
+}

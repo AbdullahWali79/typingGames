@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import DifficultySelector from "./DifficultySelector";
 import VirtualKeyboard from "./VirtualKeyboard";
 import Mascot from "./Mascot";
+import TypingHands from "./TypingHands";
 import Confetti from "./Confetti";
 import { DIFFICULTY_LEVELS, TEST_PASSAGES, TEST_STORIES } from "../data";
 import {
@@ -34,6 +35,7 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
   const [timeLeft, setTimeLeft] = useState(settings.testTime);
   const [showConfetti, setShowConfetti] = useState(false);
   const [personalBestComparison, setPersonalBestComparison] = useState(null);
+  const [lastPressedChar, setLastPressedChar] = useState(null);
   
   const textAreaRef = useRef(null);
   const startTimeRef = useRef(null);
@@ -188,7 +190,10 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
   function addVirtualCharacter(character) {
     playTypeSound();
     setTypedText((previous) => `${previous}${character}`);
+    setLastPressedChar(character);
     textAreaRef.current?.focus();
+    
+    setTimeout(() => setLastPressedChar(null), 150);
   }
 
   function removeVirtualCharacter() {
@@ -295,6 +300,12 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
           nextHintChar={passage[typedText.length]}
           theme={contentMode === "story" ? "story" : "test"}
           layout="full"
+        />
+        
+        <TypingHands
+          nextChar={passage[typedText.length]}
+          justPressedChar={lastPressedChar}
+          isVisible={status === "running"}
         />
       </div>
     </section>
