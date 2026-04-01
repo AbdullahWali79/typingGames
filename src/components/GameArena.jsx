@@ -245,8 +245,6 @@ export default function GameArena({
     promptIssuedAtRef.current = Date.now();
   }
 
-  const keyboardLayout = /^\d+$/.test(targetPrompt.trim()) ? "numeric" : "full";
-
   return (
     <section className="page">
       <div className="section-head">
@@ -303,7 +301,7 @@ export default function GameArena({
             onEnter={submitEntry}
             nextHintChar={targetPrompt[entry.length]}
             theme={game.promptStyle}
-            layout={keyboardLayout}
+            layout="full"
           />
           <div className="arena-actions">
             <button className="secondary-btn" type="button" onClick={submitEntry} disabled={status !== "running"}>
