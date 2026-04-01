@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import DifficultySelector from "./DifficultySelector";
 import { DIFFICULTY_LEVELS, ENCOURAGEMENTS } from "../data";
 import {
-  buildGamePrompt,
+  buildGameChallenge,
   calculateAccuracy,
   calculateWpm,
   countMatchingCharacters,
@@ -36,6 +36,8 @@ export default function GameArena({
   const [status, setStatus] = useState("idle");
   const [timeLeft, setTimeLeft] = useState(settings.gameTime);
   const [targetPrompt, setTargetPrompt] = useState("");
+  const [displayPrompt, setDisplayPrompt] = useState("");
+  const [promptHint, setPromptHint] = useState("");
   const [entry, setEntry] = useState("");
   const [feedback, setFeedback] = useState("Type what you see and press Enter.");
   const [metrics, setMetrics] = useState(createInitialMetrics);
@@ -85,7 +87,7 @@ export default function GameArena({
   function resetSession() {
     setStatus("idle");
     setTimeLeft(settings.gameTime);
-    setTargetPrompt(buildGamePrompt(game, difficulty));
+    applyNextChallenge();
     setEntry("");
     setFeedback("Type what you see and press Enter.");
     setMetrics(createInitialMetrics());
@@ -95,7 +97,7 @@ export default function GameArena({
   function startSession() {
     setStatus("running");
     setTimeLeft(settings.gameTime);
-    setTargetPrompt(buildGamePrompt(game, difficulty));
+    applyNextChallenge();
     setEntry("");
     setFeedback("You can do this!");
     setMetrics(createInitialMetrics());
@@ -133,7 +135,7 @@ export default function GameArena({
 
     setFeedback(isCorrect ? randomItem(ENCOURAGEMENTS) : "Keep going!");
     setEntry("");
-    setTargetPrompt(buildGamePrompt(game, difficulty));
+    applyNextChallenge();
   }
 
   function finishSession() {
@@ -157,6 +159,13 @@ export default function GameArena({
     setStatus("finished");
     setFeedback(randomItem(ENCOURAGEMENTS));
     onGameComplete(game.id, summary);
+  }
+
+  function applyNextChallenge() {
+    const challenge = buildGameChallenge(game, difficulty);
+    setTargetPrompt(challenge.target);
+    setDisplayPrompt(challenge.display);
+    setPromptHint(challenge.hint);
   }
 
   return (
@@ -190,7 +199,8 @@ export default function GameArena({
         </div>
 
         <div className="prompt-card">
-          <p className="target-text">{targetPrompt}</p>
+          <p className="target-text">{displayPrompt}</p>
+          {promptHint ? <p className="prompt-hint">Hint: {promptHint}</p> : null}
           <input
             ref={inputRef}
             type="text"

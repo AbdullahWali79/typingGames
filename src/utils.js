@@ -42,6 +42,25 @@ export function buildGamePrompt(game, difficulty) {
   return words.join(" ");
 }
 
+export function buildGameChallenge(game, difficulty) {
+  if (game.promptStyle === "anagram") {
+    const puzzle = pickAnagramPuzzle(game.pool, difficulty);
+    const target = puzzle.word.toLowerCase().trim();
+    return {
+      target,
+      display: shuffleWord(target),
+      hint: puzzle.hint || "Unscramble the letters."
+    };
+  }
+
+  const prompt = buildGamePrompt(game, difficulty);
+  return {
+    target: prompt,
+    display: prompt,
+    hint: ""
+  };
+}
+
 export function getRandomPassage(passages, difficulty) {
   const list = passages[difficulty] ?? passages.Beginner;
   return randomItem(list);
@@ -110,4 +129,43 @@ export function getMotivationMessage(wpm, accuracy) {
 
 function randomBetween(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function shuffleWord(word) {
+  const chars = word.split("");
+  if (chars.length < 2) {
+    return word;
+  }
+
+  let shuffled = word;
+  let attempt = 0;
+  while (shuffled === word && attempt < 6) {
+    const next = [...chars];
+    for (let i = next.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [next[i], next[j]] = [next[j], next[i]];
+    }
+    shuffled = next.join("");
+    attempt += 1;
+  }
+  return shuffled;
+}
+
+function pickAnagramPuzzle(pool, difficulty) {
+  if (!Array.isArray(pool) || !pool.length) {
+    return { word: "typing", hint: "Use your keyboard skills." };
+  }
+
+  const filtered = pool.filter((item) => {
+    const len = item.word?.length ?? 0;
+    if (difficulty === "Beginner") {
+      return len <= 5;
+    }
+    if (difficulty === "Intermediate") {
+      return len >= 5 && len <= 7;
+    }
+    return len >= 7;
+  });
+
+  return randomItem(filtered.length ? filtered : pool);
 }

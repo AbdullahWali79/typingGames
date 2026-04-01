@@ -370,6 +370,12 @@ main {
   font-size: clamp(1.2rem, 2.5vw, 1.8rem);
 }
 
+.prompt-hint {
+  margin-top: -0.2rem;
+  color: #2f5f85;
+  font-weight: 700;
+}
+
 input,
 textarea {
   width: 100%;

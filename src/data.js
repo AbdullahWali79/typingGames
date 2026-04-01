@@ -53,6 +53,22 @@ export const GAME_LIBRARY = [
     pool: ["zoom", "sprint", "track", "rocket", "quick", "turbo", "dash", "finish"]
   },
   {
+    id: "word-jigsaw",
+    title: "Word Jigsaw Puzzle",
+    subtitle: "Unscramble jumbled letters and type the correct word.",
+    promptStyle: "anagram",
+    pool: [
+      { word: "cat", hint: "A small pet that says meow." },
+      { word: "tree", hint: "It has leaves and a trunk." },
+      { word: "ocean", hint: "A huge body of salty water." },
+      { word: "rocket", hint: "It flies to space." },
+      { word: "planet", hint: "Earth is one of these." },
+      { word: "dinosaur", hint: "A giant creature from long ago." },
+      { word: "rainbow", hint: "Colorful arc in the sky after rain." },
+      { word: "adventure", hint: "A fun journey with surprises." }
+    ]
+  },
+  {
     id: "sentence-builder",
     title: "Sentence Builder",
     subtitle: "Build tiny sentences by typing them correctly.",
