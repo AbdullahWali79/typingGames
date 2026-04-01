@@ -38,12 +38,15 @@ export default function GameArena({
   const [targetPrompt, setTargetPrompt] = useState("");
   const [displayPrompt, setDisplayPrompt] = useState("");
   const [promptHint, setPromptHint] = useState("");
+  const [challengeMeta, setChallengeMeta] = useState({});
+  const [isPromptHidden, setIsPromptHidden] = useState(false);
   const [entry, setEntry] = useState("");
   const [feedback, setFeedback] = useState("Type what you see and press Enter.");
   const [metrics, setMetrics] = useState(createInitialMetrics);
   const [finalStats, setFinalStats] = useState(null);
   const inputRef = useRef(null);
   const metricsRef = useRef(metrics);
+  const promptIssuedAtRef = useRef(Date.now());
 
   useEffect(() => {
     metricsRef.current = metrics;
@@ -70,6 +73,19 @@ export default function GameArena({
     }
   }, [status, timeLeft]);
 
+  useEffect(() => {
+    setIsPromptHidden(false);
+    if (status !== "running" || !challengeMeta.hideAfterMs) {
+      return;
+    }
+
+    const hideTimer = setTimeout(() => {
+      setIsPromptHidden(true);
+    }, challengeMeta.hideAfterMs);
+
+    return () => clearTimeout(hideTimer);
+  }, [challengeMeta, displayPrompt, status]);
+
   const elapsedSeconds = settings.gameTime - timeLeft;
   const liveAccuracy = round(calculateAccuracy(metrics.correctChars, metrics.typedChars));
   const liveSpeed = round(calculateWpm(metrics.correctChars, Math.max(elapsedSeconds, 1)));
@@ -84,10 +100,33 @@ export default function GameArena({
     return "Ready to start";
   }, [metrics.correctPrompts, status]);
 
+  const modeLabel = useMemo(() => {
+    if (game.promptStyle === "treasure") {
+      return `Treasure unlocked: ${metrics.correctPrompts}/12`;
+    }
+    if (game.promptStyle === "escape") {
+      return `Safety meter: ${Math.max(0, 10 - metrics.mistakeChars)}/10`;
+    }
+    if (game.promptStyle === "maze") {
+      return `Maze gates open: ${metrics.correctPrompts}`;
+    }
+    if (game.promptStyle === "boss" && challengeMeta.isBossRound) {
+      return "Boss round active";
+    }
+    if (game.promptStyle === "story") {
+      return `Story chapter ${challengeMeta.chapter ?? 1}`;
+    }
+    return "";
+  }, [challengeMeta.chapter, challengeMeta.isBossRound, game.promptStyle, metrics.correctPrompts, metrics.mistakeChars]);
+
+  const visiblePrompt = isPromptHidden
+    ? challengeMeta.hiddenDisplay || "????"
+    : displayPrompt;
+
   function resetSession() {
     setStatus("idle");
     setTimeLeft(settings.gameTime);
-    applyNextChallenge();
+    applyNextChallenge(0, 0);
     setEntry("");
     setFeedback("Type what you see and press Enter.");
     setMetrics(createInitialMetrics());
@@ -97,7 +136,7 @@ export default function GameArena({
   function startSession() {
     setStatus("running");
     setTimeLeft(settings.gameTime);
-    applyNextChallenge();
+    applyNextChallenge(0, 0);
     setEntry("");
     setFeedback("You can do this!");
     setMetrics(createInitialMetrics());
@@ -115,13 +154,26 @@ export default function GameArena({
       return;
     }
 
+    const currentMetrics = metricsRef.current;
     const target = targetPrompt.trim();
     const matches = countMatchingCharacters(target, typed);
     const mistakes = Math.max(Math.max(typed.length, target.length) - matches, 0);
-    const isCorrect = typed.toLowerCase() === target.toLowerCase();
-    const gain = isCorrect
+    const isCorrect = normalizeTypedValue(typed) === normalizeTypedValue(target);
+    const baseGain = isCorrect
       ? Math.round((target.length + 4) * settings.scoreMultiplier)
       : Math.round(matches * settings.scoreMultiplier * 0.4);
+    const responseTime = Date.now() - promptIssuedAtRef.current;
+    const rhythmBonus =
+      isCorrect && challengeMeta.rhythmWindowMs && responseTime <= challengeMeta.rhythmWindowMs
+        ? Math.round(5 * settings.scoreMultiplier)
+        : 0;
+    const bossBonus =
+      isCorrect && challengeMeta.isBossRound ? Math.round(12 * settings.scoreMultiplier) : 0;
+    const memoryBonus =
+      isCorrect && game.promptStyle === "memory" ? Math.round(3 * settings.scoreMultiplier) : 0;
+    const gain = baseGain + rhythmBonus + bossBonus + memoryBonus;
+    const nextCorrectPrompts = currentMetrics.correctPrompts + (isCorrect ? 1 : 0);
+    const nextMistakeChars = currentMetrics.mistakeChars + mistakes;
 
     setMetrics((prev) => ({
       ...prev,
@@ -133,9 +185,17 @@ export default function GameArena({
       mistakeChars: prev.mistakeChars + mistakes
     }));
 
-    setFeedback(isCorrect ? randomItem(ENCOURAGEMENTS) : "Keep going!");
+    if (isCorrect && challengeMeta.isBossRound) {
+      setFeedback("Boss smashed! Amazing typing!");
+    } else if (isCorrect && rhythmBonus > 0) {
+      setFeedback("Perfect rhythm! Bonus points!");
+    } else if (!isCorrect && game.promptStyle === "escape") {
+      setFeedback("Run faster! Keep typing!");
+    } else {
+      setFeedback(isCorrect ? randomItem(ENCOURAGEMENTS) : "Keep going!");
+    }
     setEntry("");
-    applyNextChallenge();
+    applyNextChallenge(nextCorrectPrompts, nextMistakeChars);
   }
 
   function finishSession() {
@@ -161,11 +221,17 @@ export default function GameArena({
     onGameComplete(game.id, summary);
   }
 
-  function applyNextChallenge() {
-    const challenge = buildGameChallenge(game, difficulty);
+  function applyNextChallenge(cleared, mistakeChars) {
+    const challenge = buildGameChallenge(game, difficulty, {
+      cleared,
+      mistakeChars
+    });
     setTargetPrompt(challenge.target);
     setDisplayPrompt(challenge.display);
     setPromptHint(challenge.hint);
+    setChallengeMeta(challenge.meta ?? {});
+    setIsPromptHidden(false);
+    promptIssuedAtRef.current = Date.now();
   }
 
   return (
@@ -199,8 +265,9 @@ export default function GameArena({
         </div>
 
         <div className="prompt-card">
-          <p className="target-text">{displayPrompt}</p>
+          <p className="target-text">{visiblePrompt}</p>
           {promptHint ? <p className="prompt-hint">Hint: {promptHint}</p> : null}
+          {modeLabel ? <p className="mode-note">{modeLabel}</p> : null}
           <input
             ref={inputRef}
             type="text"
@@ -249,4 +316,12 @@ export default function GameArena({
       </button>
     </section>
   );
+}
+
+function normalizeTypedValue(value) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .trim()
+    .replace(/\s+/g, " ");
 }

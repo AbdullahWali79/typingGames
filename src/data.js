@@ -69,6 +69,116 @@ export const GAME_LIBRARY = [
     ]
   },
   {
+    id: "typing-ninja",
+    title: "Typing Ninja",
+    subtitle: "Slice falling words by typing them before they drop.",
+    promptStyle: "words",
+    pool: ["slice", "swift", "ninja", "focus", "shadow", "strike", "silent", "dash"]
+  },
+  {
+    id: "spelling-bee-sprint",
+    title: "Spelling Bee Sprint",
+    subtitle: "Read the clue and type the correct spelling quickly.",
+    promptStyle: "spelling",
+    pool: [
+      { word: "banana", clue: "A yellow fruit monkeys love." },
+      { word: "school", clue: "A place where children learn." },
+      { word: "library", clue: "A place full of books." },
+      { word: "science", clue: "Subject about experiments and discovery." },
+      { word: "elephant", clue: "A giant animal with a trunk." },
+      { word: "beautiful", clue: "Something very pretty." }
+    ]
+  },
+  {
+    id: "math-plus-type",
+    title: "Math + Type",
+    subtitle: "Solve fun equations and type the answer.",
+    promptStyle: "math",
+    pool: []
+  },
+  {
+    id: "memory-typing-flip",
+    title: "Memory Typing Flip",
+    subtitle: "Memorize the word, then type after it hides.",
+    promptStyle: "memory",
+    pool: ["cat", "jump", "forest", "rocket", "pencil", "planet", "rainbow", "elephant"]
+  },
+  {
+    id: "pirate-treasure-typing",
+    title: "Pirate Treasure Typing",
+    subtitle: "Unlock treasure map steps with accurate typing.",
+    promptStyle: "treasure",
+    pool: ["pirate", "island", "compass", "captain", "anchor", "treasure", "parrot", "voyage"]
+  },
+  {
+    id: "zombie-escape-typing",
+    title: "Zombie Escape Typing",
+    subtitle: "Type fast to stay ahead of the zombies.",
+    promptStyle: "escape",
+    pool: ["escape", "sprint", "shield", "safe", "tunnel", "rescue", "flashlight", "checkpoint"]
+  },
+  {
+    id: "emoji-word-quest",
+    title: "Emoji Word Quest",
+    subtitle: "Use emoji clues to type the hidden word.",
+    promptStyle: "emoji",
+    pool: [
+      { emoji: "🐱", word: "cat" },
+      { emoji: "🚀", word: "rocket" },
+      { emoji: "🌈", word: "rainbow" },
+      { emoji: "🐟", word: "fish" },
+      { emoji: "🍎", word: "apple" },
+      { emoji: "⚽", word: "ball" }
+    ]
+  },
+  {
+    id: "typing-rhythm-beat",
+    title: "Typing Rhythm Beat",
+    subtitle: "Type to the beat and earn timing bonuses.",
+    promptStyle: "rhythm",
+    pool: ["tap tap go", "boom clap type", "fast fingers now", "beat and type", "rhythm racer"]
+  },
+  {
+    id: "word-ladder-kids",
+    title: "Word Ladder Kids",
+    subtitle: "Change one letter and type the target word.",
+    promptStyle: "ladder",
+    pool: [
+      { from: "cat", to: "bat", rule: "Change first letter" },
+      { from: "sun", to: "fun", rule: "Change first letter" },
+      { from: "book", to: "cook", rule: "Change first letter" },
+      { from: "ship", to: "shop", rule: "Change one middle letter" },
+      { from: "plane", to: "plant", rule: "Change last letter" }
+    ]
+  },
+  {
+    id: "boss-battle-typing",
+    title: "Boss Battle Typing",
+    subtitle: "Every few rounds a boss combo appears for extra points.",
+    promptStyle: "boss",
+    pool: ["mega combo", "power blast", "typing thunder", "rapid strike", "victory mode"]
+  },
+  {
+    id: "maze-unlock-typing",
+    title: "Maze Unlock Typing",
+    subtitle: "Type correctly to open maze gates step by step.",
+    promptStyle: "maze",
+    pool: ["gate", "path", "turn", "key", "clue", "maze", "escape", "finish"]
+  },
+  {
+    id: "story-mode-typing",
+    title: "Story Mode Typing",
+    subtitle: "Type story lines to move to the next chapter.",
+    promptStyle: "story",
+    pool: [
+      "Luna found a tiny map near the old tree.",
+      "She followed glowing stars through the quiet park.",
+      "A friendly fox showed her a hidden bridge.",
+      "Across the bridge she saw a golden kite.",
+      "Luna smiled because bravery unlocked a new adventure."
+    ]
+  },
+  {
     id: "sentence-builder",
     title: "Sentence Builder",
     subtitle: "Build tiny sentences by typing them correctly.",

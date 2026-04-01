@@ -376,6 +376,11 @@ main {
   font-weight: 700;
 }
 
+.mode-note {
+  color: #0f5775;
+  font-weight: 800;
+}
+
 input,
 textarea {
   width: 100%;
