@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import DifficultySelector from "./DifficultySelector";
+import VirtualKeyboard from "./VirtualKeyboard";
 import { DIFFICULTY_LEVELS, ENCOURAGEMENTS } from "../data";
 import {
   buildGameChallenge,
@@ -221,6 +222,16 @@ export default function GameArena({
     onGameComplete(game.id, summary);
   }
 
+  function addVirtualCharacter(character) {
+    setEntry((previous) => `${previous}${character}`);
+    inputRef.current?.focus();
+  }
+
+  function removeVirtualCharacter() {
+    setEntry((previous) => previous.slice(0, -1));
+    inputRef.current?.focus();
+  }
+
   function applyNextChallenge(cleared, mistakeChars) {
     const challenge = buildGameChallenge(game, difficulty, {
       cleared,
@@ -233,6 +244,8 @@ export default function GameArena({
     setIsPromptHidden(false);
     promptIssuedAtRef.current = Date.now();
   }
+
+  const keyboardLayout = /^\d+$/.test(targetPrompt.trim()) ? "numeric" : "full";
 
   return (
     <section className="page">
@@ -281,6 +294,16 @@ export default function GameArena({
               }
             }}
             disabled={status !== "running"}
+          />
+          <VirtualKeyboard
+            disabled={status !== "running"}
+            onInput={addVirtualCharacter}
+            onBackspace={removeVirtualCharacter}
+            onSpace={() => addVirtualCharacter(" ")}
+            onEnter={submitEntry}
+            nextHintChar={targetPrompt[entry.length]}
+            theme={game.promptStyle}
+            layout={keyboardLayout}
           />
           <div className="arena-actions">
             <button className="secondary-btn" type="button" onClick={submitEntry} disabled={status !== "running"}>

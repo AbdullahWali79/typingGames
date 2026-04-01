@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import DifficultySelector from "./DifficultySelector";
-import { DIFFICULTY_LEVELS, TEST_PASSAGES } from "../data";
+import VirtualKeyboard from "./VirtualKeyboard";
+import { DIFFICULTY_LEVELS, TEST_PASSAGES, TEST_STORIES } from "../data";
 import {
   calculateAccuracy,
   calculateWpm,
@@ -15,9 +16,11 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
   const settings = DIFFICULTY_LEVELS[difficulty] ?? DIFFICULTY_LEVELS.Beginner;
   const [status, setStatus] = useState("setup");
   const [name, setName] = useState("");
+  const [contentMode, setContentMode] = useState("passage");
   const [passage, setPassage] = useState("");
   const [typedText, setTypedText] = useState("");
   const [timeLeft, setTimeLeft] = useState(settings.testTime);
+  const textAreaRef = useRef(null);
 
   useEffect(() => {
     if (status !== "running") {
@@ -41,13 +44,20 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
     }
   }, [difficulty, settings.testTime, status]);
 
+  useEffect(() => {
+    if (status === "running") {
+      setTimeout(() => textAreaRef.current?.focus(), 0);
+    }
+  }, [status]);
+
   const liveAccuracy = useMemo(() => {
     const correct = countMatchingCharacters(passage.slice(0, typedText.length), typedText);
     return round(calculateAccuracy(correct, typedText.length));
   }, [passage, typedText]);
 
   function startTest() {
-    setPassage(getRandomPassage(TEST_PASSAGES, difficulty));
+    const source = contentMode === "story" ? TEST_STORIES : TEST_PASSAGES;
+    setPassage(getRandomPassage(source, difficulty));
     setTypedText("");
     setTimeLeft(settings.testTime);
     setStatus("running");
@@ -69,6 +79,7 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
       totalTypedCharacters: typedText.length,
       level,
       difficulty,
+      testMode: contentMode,
       date: new Date().toISOString(),
       message: getMotivationMessage(wpm, accuracy)
     };
@@ -95,6 +106,16 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
     );
   }
 
+  function addVirtualCharacter(character) {
+    setTypedText((previous) => `${previous}${character}`);
+    textAreaRef.current?.focus();
+  }
+
+  function removeVirtualCharacter() {
+    setTypedText((previous) => previous.slice(0, -1));
+    textAreaRef.current?.focus();
+  }
+
   if (status === "setup") {
     return (
       <section className="page">
@@ -115,7 +136,26 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
-          <p className="setup-note">Timer: {settings.testTime} seconds | Difficulty: {difficulty}</p>
+          <div className="mode-selector">
+            <button
+              type="button"
+              className={`mode-btn ${contentMode === "passage" ? "active" : ""}`}
+              onClick={() => setContentMode("passage")}
+            >
+              Quick Passage
+            </button>
+            <button
+              type="button"
+              className={`mode-btn ${contentMode === "story" ? "active" : ""}`}
+              onClick={() => setContentMode("story")}
+            >
+              Short Story
+            </button>
+          </div>
+          <p className="setup-note">
+            Timer: {settings.testTime} seconds | Difficulty: {difficulty} | Mode:{" "}
+            {contentMode === "story" ? "Short Story" : "Quick Passage"}
+          </p>
           <button className="primary-btn" type="button" onClick={startTest}>
             Start Typing Test
           </button>
@@ -137,6 +177,7 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
       <div className="test-card">
         {renderPassage()}
         <textarea
+          ref={textAreaRef}
           value={typedText}
           onChange={(event) => setTypedText(event.target.value)}
           placeholder="Start typing the text shown above..."
@@ -150,6 +191,16 @@ export default function TypingTest({ difficulty, onDifficultyChange, onComplete 
         <button className="secondary-btn" type="button" onClick={finishTest}>
           Finish Test
         </button>
+        <VirtualKeyboard
+          disabled={status !== "running"}
+          onInput={addVirtualCharacter}
+          onBackspace={removeVirtualCharacter}
+          onSpace={() => addVirtualCharacter(" ")}
+          onEnter={() => addVirtualCharacter(" ")}
+          nextHintChar={passage[typedText.length]}
+          theme={contentMode === "story" ? "story" : "test"}
+          layout="full"
+        />
       </div>
     </section>
   );

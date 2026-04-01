@@ -381,6 +381,107 @@ main {
   font-weight: 800;
 }
 
+.mode-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.mode-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  font-weight: 800;
+  color: #1f4463;
+  background: rgba(255, 255, 255, 0.88);
+  cursor: pointer;
+}
+
+.mode-btn.active {
+  color: #fff;
+  background: linear-gradient(120deg, #ff7b3d, #ff4e8f);
+}
+
+.virtual-keyboard {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  background: linear-gradient(130deg, rgba(63, 152, 255, 0.14), rgba(255, 255, 255, 0.95));
+  border: 2px solid rgba(26, 112, 204, 0.15);
+}
+
+.vk-title {
+  font-family: "Baloo 2", "Trebuchet MS", sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1d4f72;
+}
+
+.vk-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.vk-key {
+  border: 0;
+  border-radius: 10px;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 0.45rem;
+  font-weight: 800;
+  color: #1a4668;
+  background: linear-gradient(120deg, #ffffff, #dff2ff);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.vk-key:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 14px rgba(22, 60, 87, 0.15);
+}
+
+.vk-key:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.vk-key.next-key {
+  color: #fff;
+  background: linear-gradient(120deg, #ff7b3d, #ff4e8f);
+}
+
+.vk-actions .vk-key.wide {
+  min-width: 120px;
+}
+
+.vk-actions .vk-key.action {
+  min-width: 98px;
+}
+
+.virtual-keyboard.theme-story,
+.virtual-keyboard.theme-treasure {
+  background: linear-gradient(130deg, rgba(255, 188, 84, 0.24), rgba(255, 255, 255, 0.96));
+}
+
+.virtual-keyboard.theme-emoji,
+.virtual-keyboard.theme-color {
+  background: linear-gradient(130deg, rgba(255, 114, 170, 0.2), rgba(255, 255, 255, 0.96));
+}
+
+.virtual-keyboard.theme-math,
+.virtual-keyboard.theme-ladder {
+  background: linear-gradient(130deg, rgba(118, 104, 255, 0.2), rgba(255, 255, 255, 0.96));
+}
+
+.virtual-keyboard.theme-boss,
+.virtual-keyboard.theme-rhythm,
+.virtual-keyboard.theme-space {
+  background: linear-gradient(130deg, rgba(84, 129, 255, 0.26), rgba(255, 255, 255, 0.96));
+}
+
 input,
 textarea {
   width: 100%;
@@ -608,5 +709,19 @@ textarea {
 
   .hero-card {
     padding: 1.2rem;
+  }
+
+  .vk-key {
+    min-width: 32px;
+    height: 34px;
+    font-size: 0.9rem;
+  }
+
+  .vk-actions .vk-key.wide {
+    min-width: 92px;
+  }
+
+  .vk-actions .vk-key.action {
+    min-width: 78px;
   }
 }

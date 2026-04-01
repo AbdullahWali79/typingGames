@@ -259,3 +259,21 @@ export const TEST_PASSAGES = {
     "A curious learner can turn short daily drills into strong typing habits for school and beyond."
   ]
 };
+
+export const TEST_STORIES = {
+  Beginner: [
+    "Mina has a red kite. She runs in the park. The kite dances in the sky.",
+    "Ali sees a small frog. He smiles and says hello. The frog jumps to the pond.",
+    "Sara bakes tiny cookies. Her cat waits nearby. They share a happy snack."
+  ],
+  Intermediate: [
+    "Rayan found a shiny key under a bench. He followed chalk arrows and opened a tiny library box full of comics.",
+    "Noor planted sunflower seeds with her class. After many sunny days, tall flowers waved like yellow flags.",
+    "Two friends built a cardboard rocket in the garage. They counted down, laughed, and imagined a moon mission."
+  ],
+  Advanced: [
+    "On the first day of summer camp, Hadi mapped every trail with careful notes, then guided his team through the woods to a hidden waterfall.",
+    "When the school power went out, Ayesha organized a flashlight reading circle and turned a quiet hallway into a magical story theater.",
+    "During the science fair, Musa presented a wind-powered car, explained each design choice clearly, and inspired younger students to start inventing."
+  ]
+};
