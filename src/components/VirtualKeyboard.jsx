@@ -12,7 +12,7 @@ const KEYBOARD_101 = [
     keyDef("0"),
     keyDef("-"),
     keyDef("="),
-    actionKey("Backspace", "backspace", 2)
+    actionKey("Back", "backspace", 2)
   ],
   [
     actionKey("Tab", "tab", 1.5),
@@ -75,17 +75,18 @@ const NUMERIC_ROWS = [
   [actionKey("0", "input", 2, false, "0"), keyDef("."), keyDef("-")]
 ];
 
-const FINGER_INFO = [
-  { id: "lp", label: "Left Pinky", short: "LP" },
-  { id: "lr", label: "Left Ring", short: "LR" },
-  { id: "lm", label: "Left Middle", short: "LM" },
-  { id: "li", label: "Left Index", short: "LI" },
-  { id: "lt", label: "Left Thumb", short: "LT" },
-  { id: "rt", label: "Right Thumb", short: "RT" },
-  { id: "ri", label: "Right Index", short: "RI" },
-  { id: "rm", label: "Right Middle", short: "RM" },
-  { id: "rr", label: "Right Ring", short: "RR" },
-  { id: "rp", label: "Right Pinky", short: "RP" }
+const LEFT_HAND_PANEL = [
+  { id: "lp", label: "Pinky", home: "A" },
+  { id: "lr", label: "Ring", home: "S" },
+  { id: "lm", label: "Middle", home: "D" },
+  { id: "li", label: "Index", home: "F" }
+];
+
+const RIGHT_HAND_PANEL = [
+  { id: "ri", label: "Index", home: "J" },
+  { id: "rm", label: "Middle", home: "K" },
+  { id: "rr", label: "Ring", home: "L" },
+  { id: "rp", label: "Pinky", home: ";" }
 ];
 
 const SHIFTED_KEY_MAP = {
@@ -182,31 +183,52 @@ export default function VirtualKeyboard({
   const rows = layout === "numeric" ? NUMERIC_ROWS : KEYBOARD_101;
   const normalizedHintKey = normalizeHintKey(nextHintChar);
   const activeFinger = getFingerId(normalizedHintKey);
+  const hintLabel = formatHintLabel(normalizedHintKey);
 
   return (
     <div className={`virtual-keyboard theme-${theme}`}>
-      <div className="vk-header">
-        <p className="vk-title">Virtual Keyboard 101</p>
-        <p className="vk-subtitle">Click keys to type. Follow highlighted finger guide.</p>
+      <div className="vk-target-bar">
+        <span className="vk-target-label">Press key:</span>
+        <span className="vk-target-key">{hintLabel}</span>
       </div>
 
-      <div className="vk-finger-legend">
-        {FINGER_INFO.map((finger) => (
-          <span
-            key={finger.id}
-            className={`vk-finger-chip finger-${finger.id} ${activeFinger === finger.id ? "active" : ""}`}
-            title={finger.label}
-          >
-            {finger.short}
-          </span>
-        ))}
-      </div>
+      <div className="vk-layout-shell">
+        <div className="vk-hand-card left">
+          <p className="vk-hand-title">Left Hand</p>
+          {LEFT_HAND_PANEL.map((item) => (
+            <div key={item.id} className={`vk-hand-row ${activeFinger === item.id ? "active" : ""}`}>
+              <span>{item.label}</span>
+              <strong>{item.home}</strong>
+            </div>
+          ))}
+        </div>
 
-      <div className="vk-board-wrap">
-        <div className="vk-board">
-          {rows.map((row, rowIndex) => (
-            <div className="vk-row" key={`row-${rowIndex}`}>
-              {row.map((key) => renderKey({ key, disabled, onInput, onBackspace, onSpace, onEnter, normalizedHintKey }))}
+        <div className="vk-board-wrap">
+          <div className="vk-board">
+            {rows.map((row, rowIndex) => (
+              <div className="vk-row" key={`row-${rowIndex}`}>
+                {row.map((key) =>
+                  renderKey({
+                    key,
+                    disabled,
+                    onInput,
+                    onBackspace,
+                    onSpace,
+                    onEnter,
+                    normalizedHintKey
+                  })
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="vk-hand-card right">
+          <p className="vk-hand-title">Right Hand</p>
+          {RIGHT_HAND_PANEL.map((item) => (
+            <div key={item.id} className={`vk-hand-row ${activeFinger === item.id ? "active" : ""}`}>
+              <span>{item.label}</span>
+              <strong>{item.home}</strong>
             </div>
           ))}
         </div>
@@ -230,7 +252,6 @@ function renderKey({ key, disabled, onInput, onBackspace, onSpace, onEnter, norm
       onClick={() => handleKeyPress(key, onInput, onBackspace, onSpace, onEnter)}
     >
       <span className="vk-key-main">{key.label}</span>
-      {fingerId ? <span className="vk-key-finger">{fingerShort(fingerId)}</span> : null}
     </button>
   );
 }
@@ -305,7 +326,18 @@ function normalizeHintKey(value) {
   return SHIFTED_KEY_MAP[first] ?? lower;
 }
 
-function fingerShort(fingerId) {
-  const entry = FINGER_INFO.find((finger) => finger.id === fingerId);
-  return entry ? entry.short : "";
+function formatHintLabel(hintKey) {
+  if (!hintKey) {
+    return "-";
+  }
+  if (hintKey === "space") {
+    return "Space";
+  }
+  if (hintKey === "enter") {
+    return "Enter";
+  }
+  if (hintKey === "tab") {
+    return "Tab";
+  }
+  return hintKey.toUpperCase();
 }
