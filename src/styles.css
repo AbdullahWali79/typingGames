@@ -463,15 +463,17 @@ main {
 }
 
 .vk-layout-shell {
+  --vk-unit: clamp(28px, 2.65vw, 48px);
+  --vk-gap: clamp(2px, 0.32vw, 5px);
   display: grid;
-  grid-template-columns: 180px minmax(0, 1fr) 180px;
-  gap: 0.8rem;
+  grid-template-columns: 150px minmax(0, 1fr) 150px;
+  gap: clamp(0.45rem, 0.9vw, 0.8rem);
   align-items: center;
 }
 
 .vk-board-wrap {
-  overflow-x: auto;
-  padding-bottom: 0.2rem;
+  overflow: hidden;
+  padding-bottom: 0;
 }
 
 .vk-hand-card {
@@ -481,7 +483,7 @@ main {
   padding: 0.8rem 0.68rem;
   display: grid;
   gap: 0.38rem;
-  min-height: 296px;
+  min-height: 282px;
   align-content: start;
 }
 
@@ -560,14 +562,15 @@ main {
 }
 
 .vk-board {
-  min-width: 1010px;
+  width: 100%;
+  min-width: 0;
   display: grid;
   gap: 0.32rem;
 }
 
 .vk-row {
   display: flex;
-  gap: 0.3rem;
+  gap: var(--vk-gap);
   justify-content: center;
   flex-wrap: nowrap;
 }
@@ -575,9 +578,9 @@ main {
 .vk-key {
   --w: 1;
   border-radius: 7px;
-  width: calc(60px * var(--w));
-  min-width: calc(60px * var(--w));
-  height: 60px;
+  width: calc(var(--vk-unit) * var(--w));
+  min-width: calc(var(--vk-unit) * var(--w));
+  height: calc(var(--vk-unit) + 12px);
   padding: 0.25rem 0.35rem;
   font-weight: 700;
   color: #101e30;
@@ -608,23 +611,23 @@ main {
 }
 
 .vk-key-main {
-  font-size: 1.9rem;
+  font-size: clamp(1rem, calc(var(--vk-unit) * 0.38), 1.85rem);
   line-height: 1;
   font-family: "Baloo 2", "Trebuchet MS", sans-serif;
 }
 
 .vk-key:not(.next-key) .vk-key-main {
-  font-size: 1.28rem;
+  font-size: clamp(0.82rem, calc(var(--vk-unit) * 0.24), 1.18rem);
   font-family: "Nunito", "Trebuchet MS", sans-serif;
 }
 
 .vk-key.word-key .vk-key-main {
-  font-size: 1.02rem;
+  font-size: clamp(0.7rem, calc(var(--vk-unit) * 0.2), 1rem);
   font-family: "Nunito", "Trebuchet MS", sans-serif;
 }
 
 .vk-key.word-key.next-key .vk-key-main {
-  font-size: 1.12rem;
+  font-size: clamp(0.78rem, calc(var(--vk-unit) * 0.22), 1.08rem);
 }
 
 .vk-key.next-key {
@@ -949,19 +952,10 @@ textarea {
     padding: 1.2rem;
   }
 
-  .vk-key {
-    width: calc(48px * var(--w));
-    min-width: calc(48px * var(--w));
-    height: 46px;
-    font-size: 0.9rem;
-  }
-
-  .vk-board {
-    min-width: 860px;
-  }
-
   .vk-layout-shell {
     grid-template-columns: 1fr;
+    --vk-unit: clamp(21px, 5.3vw, 34px);
+    --vk-gap: clamp(1px, 0.28vw, 3px);
   }
 
   .vk-hand-card {
@@ -981,6 +975,31 @@ textarea {
   .vk-target-key {
     font-size: 1.35rem;
     min-width: 42px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .vk-layout-shell {
+    grid-template-columns: 1fr;
+    --vk-unit: clamp(24px, 3.8vw, 40px);
+    --vk-gap: clamp(1px, 0.24vw, 3px);
+  }
+
+  .vk-hand-card {
+    min-height: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.26rem 0.42rem;
+  }
+
+  .vk-hand-title {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 900px) {
+  .vk-layout-shell {
+    --vk-unit: clamp(20px, 5.2vw, 33px);
+    --vk-gap: clamp(1px, 0.24vw, 2px);
   }
 }
 
