@@ -490,7 +490,7 @@ export default function GameArena({
             onBackspace={removeVirtualCharacter}
             onSpace={() => addVirtualCharacter(" ")}
             onEnter={submitEntry}
-            nextHintChar={targetPrompt[entry.length]}
+            nextHintChar={entry.length >= targetPrompt.length ? "\n" : targetPrompt[entry.length]}
             theme={game.promptStyle}
             layout="full"
           />

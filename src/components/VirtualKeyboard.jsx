@@ -251,7 +251,8 @@ export default function VirtualKeyboard({
 
 function renderKey({ key, disabled, onInput, onBackspace, onSpace, onEnter, normalizedHintKey }) {
   const fingerId = getFingerId(key.fingerKey ?? key.value ?? key.action ?? "");
-  const isNext = normalizedHintKey === normalizeHintKey(key.value ?? key.fingerKey ?? "");
+  const keyHintSource = key.value || key.fingerKey || "";
+  const isNext = Boolean(normalizedHintKey) && normalizedHintKey === normalizeHintKey(keyHintSource);
   const isDecor = key.decorative === true;
   const isWordKey = String(key.label ?? "").length > 1;
 

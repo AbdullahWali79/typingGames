@@ -42,6 +42,14 @@ export default function NavBar({ route, onNavigate }) {
         <span className="brand-badge" />
         <span className="brand-text">Typing Adventure Kids</span>
       </div>
+      <a
+        className="nav-credit"
+        href="https://muhammadabdullahwali.vercel.app/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Designed and Developed by Muhamamd Abdullah
+      </a>
       <div className="nav-extras">
         <StreakCounter />
         <SoundToggle />
