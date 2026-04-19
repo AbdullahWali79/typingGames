@@ -326,8 +326,8 @@ export default function VirtualKeyboard({
 
 function renderKey({ key, keyId, activeKeyId, disabled, onInput, onBackspace, onSpace, onEnter }) {
   const fingerId = getFingerId(key.fingerKey ?? key.value ?? key.action ?? "");
-  const isNext = keyId === activeKeyId;
   const isDecor = key.decorative === true;
+  const isNext = !isDecor && keyId === activeKeyId;
   const isWordKey = String(key.label ?? "").length > 1;
 
   return (
