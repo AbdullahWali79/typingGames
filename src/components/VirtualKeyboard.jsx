@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 const KEYBOARD_101 = [
   [
     keyDef("`"),
@@ -29,7 +31,7 @@ const KEYBOARD_101 = [
     keyDef("p"),
     keyDef("["),
     keyDef("]"),
-    keyDef("\\", "\\")
+    keyDef("\\")
   ],
   [
     actionKey("Caps", "caps", 1.8, true),
@@ -70,7 +72,7 @@ const KEYBOARD_101 = [
 ];
 
 const NUMERIC_ROWS = [
-  [keyDef("1"), keyDef("2"), keyDef("3"), actionKey("Backspace", "backspace", 2)],
+  [keyDef("1"), keyDef("2"), keyDef("3"), actionKey("Back", "backspace", 2)],
   [keyDef("4"), keyDef("5"), keyDef("6"), actionKey("Enter", "enter", 2)],
   [keyDef("7"), keyDef("8"), keyDef("9"), actionKey("Space", "space", 2)],
   [actionKey("0", "input", 2, false, "0"), keyDef("."), keyDef("-")]
@@ -114,6 +116,7 @@ const SHIFTED_KEY_MAP = {
 };
 
 const FINGER_MAP = {
+  "`": "lp",
   "1": "lp",
   q: "lp",
   a: "lp",
@@ -122,7 +125,6 @@ const FINGER_MAP = {
   caps: "lp",
   shift: "lp",
   ctrl: "lp",
-  "`": "lp",
   "2": "lr",
   w: "lr",
   s: "lr",
@@ -171,6 +173,19 @@ const FINGER_MAP = {
   space: "lt"
 };
 
+const FINGER_NAME_MAP = {
+  lp: "Pinky",
+  lr: "Ring",
+  lm: "Middle",
+  li: "Index",
+  lt: "Thumb",
+  rt: "Thumb",
+  ri: "Index",
+  rm: "Middle",
+  rr: "Ring",
+  rp: "Pinky"
+};
+
 export default function VirtualKeyboard({
   disabled,
   onInput,
@@ -181,32 +196,86 @@ export default function VirtualKeyboard({
   theme = "default",
   layout = "full"
 }) {
+  const [keyboardStyle, setKeyboardStyle] = useState(() => {
+    try {
+      return localStorage.getItem("typingGames.keyboardStyle") || "guide";
+    } catch {
+      return "guide";
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("typingGames.keyboardStyle", keyboardStyle);
+    } catch {
+      // ignore
+    }
+  }, [keyboardStyle]);
+
   const rows = layout === "numeric" ? NUMERIC_ROWS : KEYBOARD_101;
   const normalizedHintKey = normalizeHintKey(nextHintChar);
   const activeFinger = normalizedHintKey ? getFingerId(normalizedHintKey) : "";
   const hintLabel = formatHintLabel(normalizedHintKey);
   const activeSide = activeFinger.startsWith("l") ? "left" : activeFinger.startsWith("r") ? "right" : "";
   const activeFingerName = getFingerName(activeFinger);
+  const leftFingerName = activeFinger.startsWith("l") ? activeFingerName : "-";
+  const rightFingerName = activeFinger.startsWith("r") ? activeFingerName : "-";
 
   return (
-    <div className={`virtual-keyboard theme-${theme}`}>
-      <div className="vk-target-bar">
-        <span className="vk-target-icon">👆</span>
-        <span className="vk-target-label">Press key:</span>
-        <span className="vk-target-key">{hintLabel}</span>
+    <div className={`virtual-keyboard theme-${theme} style-${keyboardStyle}`}>
+      <div className="vk-style-switch">
+        <button
+          type="button"
+          className={`vk-style-btn ${keyboardStyle === "guide" ? "active" : ""}`}
+          onClick={() => setKeyboardStyle("guide")}
+        >
+          Finger Guide
+        </button>
+        <button
+          type="button"
+          className={`vk-style-btn ${keyboardStyle === "clean" ? "active" : ""}`}
+          onClick={() => setKeyboardStyle("clean")}
+        >
+          Clean Style
+        </button>
+      </div>
+
+      <div className="vk-top-hints">
+        <div className={`vk-finger-orb left ${activeSide === "left" ? "active" : ""}`}>
+          <span className="vk-finger-orb-icon">☝</span>
+          <span className="vk-finger-orb-name">{leftFingerName}</span>
+        </div>
+
+        <div className="vk-target-bar">
+          <span className="vk-side-finger left">Left: {leftFingerName}</span>
+          <div className="vk-target-center">
+            <span className="vk-target-icon">☝</span>
+            <span className="vk-target-label">Press key:</span>
+            <span className="vk-target-key">{hintLabel}</span>
+          </div>
+          <span className="vk-side-finger right">Right: {rightFingerName}</span>
+        </div>
+
+        <div className={`vk-finger-orb right ${activeSide === "right" ? "active" : ""}`}>
+          <span className="vk-finger-orb-icon">☝</span>
+          <span className="vk-finger-orb-name">{rightFingerName}</span>
+        </div>
       </div>
 
       <div className="vk-layout-shell">
         <div className="vk-hand-card left">
-          <p className="vk-hand-title">✋ Left Hand</p>
+          <p className="vk-hand-title">Left Hand</p>
           {LEFT_HAND_PANEL.map((item) => (
             <div key={item.id} className={`vk-hand-row ${activeFinger === item.id ? "active" : ""}`}>
-              <span>{item.label}</span>
+              <span className="vk-hand-row-main">
+                <span className="vk-finger-dot">☝</span>
+                <span>{item.label}</span>
+              </span>
               <strong>{item.home}</strong>
             </div>
           ))}
           <div className={`vk-hand-use ${activeSide === "left" ? "active" : ""}`}>
-            <span>☝ USE</span>
+            <span>USE</span>
             <strong>{activeSide === "left" ? activeFingerName : "-"}</strong>
           </div>
         </div>
@@ -232,15 +301,18 @@ export default function VirtualKeyboard({
         </div>
 
         <div className="vk-hand-card right">
-          <p className="vk-hand-title">✋ Right Hand</p>
+          <p className="vk-hand-title">Right Hand</p>
           {RIGHT_HAND_PANEL.map((item) => (
             <div key={item.id} className={`vk-hand-row ${activeFinger === item.id ? "active" : ""}`}>
-              <span>{item.label}</span>
+              <span className="vk-hand-row-main">
+                <span className="vk-finger-dot">☝</span>
+                <span>{item.label}</span>
+              </span>
               <strong>{item.home}</strong>
             </div>
           ))}
           <div className={`vk-hand-use ${activeSide === "right" ? "active" : ""}`}>
-            <span>☝ USE</span>
+            <span>USE</span>
             <strong>{activeSide === "right" ? activeFingerName : "-"}</strong>
           </div>
         </div>
@@ -275,45 +347,29 @@ function handleKeyPress(key, onInput, onBackspace, onSpace, onEnter) {
     onInput(key.value);
     return;
   }
-
   if (key.action === "space") {
     onSpace();
     return;
   }
-
   if (key.action === "backspace") {
     onBackspace();
     return;
   }
-
   if (key.action === "enter") {
     onEnter();
     return;
   }
-
   if (key.action === "tab") {
     onInput("  ");
   }
 }
 
 function keyDef(label, value = label) {
-  return {
-    label,
-    value,
-    action: "input",
-    width: 1
-  };
+  return { label, value, action: "input", width: 1 };
 }
 
 function actionKey(label, action, width, decorative = false, value = "") {
-  return {
-    label,
-    action,
-    width,
-    decorative,
-    value,
-    fingerKey: action
-  };
+  return { label, action, width, decorative, value, fingerKey: action };
 }
 
 function getFingerId(keyValue) {
@@ -365,7 +421,5 @@ function formatKeyLabel(label) {
 }
 
 function getFingerName(fingerId) {
-  const all = [...LEFT_HAND_PANEL, ...RIGHT_HAND_PANEL];
-  const item = all.find((entry) => entry.id === fingerId);
-  return item ? item.label : "";
+  return FINGER_NAME_MAP[fingerId] || "";
 }

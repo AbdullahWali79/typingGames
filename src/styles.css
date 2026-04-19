@@ -435,7 +435,7 @@ main {
   width: min(100%, 1240px);
   margin: 0 auto;
   display: grid;
-  gap: 1rem;
+  gap: 0.75rem;
   padding: 1.15rem;
   border-radius: 18px;
   background: linear-gradient(180deg, #dbdfe4, #d3d9e0);
@@ -443,23 +443,99 @@ main {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 10px 22px rgba(19, 36, 54, 0.1);
 }
 
+.vk-style-switch {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.vk-style-btn {
+  border: 1px solid rgba(64, 95, 120, 0.28);
+  background: #f2f6fa;
+  color: #1f4666;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.vk-style-btn.active {
+  color: #fff;
+  background: linear-gradient(120deg, #2f6df5, #27a3ff);
+  border-color: transparent;
+}
+
+.vk-top-hints {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) 96px;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.vk-finger-orb {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 2px solid rgba(98, 113, 128, 0.38);
+  background: linear-gradient(180deg, #eef2f6, #dce3ea);
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 0.15rem;
+  color: #5f6f7f;
+}
+
+.vk-finger-orb.active {
+  border-color: #ff7f27;
+  color: #e25911;
+  box-shadow: 0 0 0 4px rgba(255, 127, 39, 0.18);
+}
+
+.vk-finger-orb-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.vk-finger-orb-name {
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
 .vk-target-bar {
-  justify-self: center;
-  width: min(100%, 900px);
+  width: 100%;
   min-height: 62px;
   border-radius: 13px;
   border: 2px solid #ef8f00;
   background: #f7e2c0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.55rem;
-  padding: 0.5rem 1rem;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.5rem 0.9rem;
 }
 
 .vk-target-icon {
   font-size: 1.45rem;
   line-height: 1;
+}
+
+.vk-target-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.vk-side-finger {
+  min-width: 118px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #d65200;
+}
+
+.vk-side-finger.right {
+  text-align: right;
 }
 
 .vk-target-label {
@@ -539,6 +615,23 @@ main {
   background: rgba(255, 255, 255, 0.62);
 }
 
+.vk-hand-row-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.vk-finger-dot {
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.7rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(110, 123, 136, 0.25);
+}
+
 .vk-hand-row strong {
   min-width: 24px;
   text-align: center;
@@ -581,6 +674,25 @@ main {
 
 .vk-hand-use.active strong {
   color: #ff4f1a;
+}
+
+.virtual-keyboard.style-clean .vk-finger-orb,
+.virtual-keyboard.style-clean .vk-side-finger,
+.virtual-keyboard.style-clean .vk-hand-card {
+  display: none;
+}
+
+.virtual-keyboard.style-clean .vk-top-hints {
+  grid-template-columns: 1fr;
+}
+
+.virtual-keyboard.style-clean .vk-layout-shell {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.virtual-keyboard.style-clean .vk-target-bar {
+  max-width: 860px;
+  margin: 0 auto;
 }
 
 .vk-board {
@@ -984,6 +1096,24 @@ textarea {
     padding: 1.2rem;
   }
 
+  .vk-style-btn {
+    font-size: 0.78rem;
+    padding: 0.3rem 0.65rem;
+  }
+
+  .vk-top-hints {
+    grid-template-columns: 1fr;
+  }
+
+  .vk-finger-orb,
+  .vk-side-finger {
+    display: none;
+  }
+
+  .vk-target-bar {
+    justify-content: center;
+  }
+
   .vk-layout-shell {
     grid-template-columns: 1fr;
     --vk-unit: clamp(21px, 5.3vw, 34px);
@@ -1010,7 +1140,7 @@ textarea {
   }
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1024px) {
   .vk-layout-shell {
     grid-template-columns: 1fr;
     --vk-unit: clamp(24px, 3.8vw, 40px);
