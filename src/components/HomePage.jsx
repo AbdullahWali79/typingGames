@@ -7,6 +7,8 @@ export default function HomePage({ onPlayGames, onTakeTest, selectedDifficulty }
   const [totalGames, setTotalGames] = useState(0);
   const [achievements, setAchievements] = useState(0);
   const [bestWpm, setBestWpm] = useState(0);
+  const developerImageUrl =
+    'https://raw.githubusercontent.com/AbdullahWali79/AbdullahImages/main/Professional.jpeg';
 
   useEffect(() => {
     const achievementStats = getAchievementStats();
@@ -29,7 +31,8 @@ export default function HomePage({ onPlayGames, onTakeTest, selectedDifficulty }
 
   return (
     <section className="page home-page">
-      <div className="hero-card">
+      <div className="hero-card hero-card-split">
+        <div className="hero-content">
         <p className="kicker">Fun typing for ages 5-12</p>
         <h1>Build speed, accuracy, and confidence.</h1>
         <p>
@@ -72,8 +75,17 @@ export default function HomePage({ onPlayGames, onTakeTest, selectedDifficulty }
             📝 Take Typing Test
           </button>
         </div>
+        </div>
+        <div className="hero-visual">
+          <img
+            src={developerImageUrl}
+            alt="Professional portrait"
+            loading="lazy"
+            referrerPolicy="no-referrer"
+          />
+        </div>
       </div>
-      
+
       <div className="feature-grid">
         <article className="feature-card">
           <h3>🎯 20+ Games</h3>
