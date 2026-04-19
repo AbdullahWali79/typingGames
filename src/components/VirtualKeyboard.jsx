@@ -1,5 +1,6 @@
 const KEYBOARD_101 = [
   [
+    keyDef("`"),
     keyDef("1"),
     keyDef("2"),
     keyDef("3"),
@@ -12,7 +13,7 @@ const KEYBOARD_101 = [
     keyDef("0"),
     keyDef("-"),
     keyDef("="),
-    actionKey("Back", "backspace", 2)
+    actionKey("Back", "backspace", 2.05)
   ],
   [
     actionKey("Tab", "tab", 1.5),
@@ -182,25 +183,32 @@ export default function VirtualKeyboard({
 }) {
   const rows = layout === "numeric" ? NUMERIC_ROWS : KEYBOARD_101;
   const normalizedHintKey = normalizeHintKey(nextHintChar);
-  const activeFinger = getFingerId(normalizedHintKey);
+  const activeFinger = normalizedHintKey ? getFingerId(normalizedHintKey) : "";
   const hintLabel = formatHintLabel(normalizedHintKey);
+  const activeSide = activeFinger.startsWith("l") ? "left" : activeFinger.startsWith("r") ? "right" : "";
+  const activeFingerName = getFingerName(activeFinger);
 
   return (
     <div className={`virtual-keyboard theme-${theme}`}>
       <div className="vk-target-bar">
+        <span className="vk-target-icon">👆</span>
         <span className="vk-target-label">Press key:</span>
         <span className="vk-target-key">{hintLabel}</span>
       </div>
 
       <div className="vk-layout-shell">
         <div className="vk-hand-card left">
-          <p className="vk-hand-title">Left Hand</p>
+          <p className="vk-hand-title">✋ Left Hand</p>
           {LEFT_HAND_PANEL.map((item) => (
             <div key={item.id} className={`vk-hand-row ${activeFinger === item.id ? "active" : ""}`}>
               <span>{item.label}</span>
               <strong>{item.home}</strong>
             </div>
           ))}
+          <div className={`vk-hand-use ${activeSide === "left" ? "active" : ""}`}>
+            <span>☝ USE</span>
+            <strong>{activeSide === "left" ? activeFingerName : "-"}</strong>
+          </div>
         </div>
 
         <div className="vk-board-wrap">
@@ -224,13 +232,17 @@ export default function VirtualKeyboard({
         </div>
 
         <div className="vk-hand-card right">
-          <p className="vk-hand-title">Right Hand</p>
+          <p className="vk-hand-title">✋ Right Hand</p>
           {RIGHT_HAND_PANEL.map((item) => (
             <div key={item.id} className={`vk-hand-row ${activeFinger === item.id ? "active" : ""}`}>
               <span>{item.label}</span>
               <strong>{item.home}</strong>
             </div>
           ))}
+          <div className={`vk-hand-use ${activeSide === "right" ? "active" : ""}`}>
+            <span>☝ USE</span>
+            <strong>{activeSide === "right" ? activeFingerName : "-"}</strong>
+          </div>
         </div>
       </div>
     </div>
@@ -241,17 +253,18 @@ function renderKey({ key, disabled, onInput, onBackspace, onSpace, onEnter, norm
   const fingerId = getFingerId(key.fingerKey ?? key.value ?? key.action ?? "");
   const isNext = normalizedHintKey === normalizeHintKey(key.value ?? key.fingerKey ?? "");
   const isDecor = key.decorative === true;
+  const isWordKey = String(key.label ?? "").length > 1;
 
   return (
     <button
       key={`${key.label}-${key.value}-${key.action}`}
       type="button"
-      className={`vk-key finger-${fingerId} ${isNext ? "next-key" : ""} ${isDecor ? "decorative" : ""}`}
+      className={`vk-key finger-${fingerId} ${isNext ? "next-key" : ""} ${isDecor ? "decorative" : ""} ${isWordKey ? "word-key" : ""}`}
       style={{ "--w": key.width ?? 1 }}
       disabled={disabled || isDecor}
       onClick={() => handleKeyPress(key, onInput, onBackspace, onSpace, onEnter)}
     >
-      <span className="vk-key-main">{key.label}</span>
+      <span className="vk-key-main">{formatKeyLabel(key.label)}</span>
     </button>
   );
 }
@@ -340,4 +353,18 @@ function formatHintLabel(hintKey) {
     return "Tab";
   }
   return hintKey.toUpperCase();
+}
+
+function formatKeyLabel(label) {
+  const raw = String(label ?? "");
+  if (/^[a-z]$/.test(raw)) {
+    return raw.toUpperCase();
+  }
+  return raw;
+}
+
+function getFingerName(fingerId) {
+  const all = [...LEFT_HAND_PANEL, ...RIGHT_HAND_PANEL];
+  const item = all.find((entry) => entry.id === fingerId);
+  return item ? item.label : "";
 }

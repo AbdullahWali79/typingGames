@@ -410,57 +410,62 @@ main {
 }
 
 .virtual-keyboard {
-  width: min(100%, 1220px);
+  width: min(100%, 1240px);
   margin: 0 auto;
   display: grid;
-  gap: 0.85rem;
-  padding: 1rem;
-  border-radius: 20px;
-  background: linear-gradient(180deg, #eff3f7, #e6ecf2);
-  border: 1px solid rgba(87, 111, 132, 0.25);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 10px 22px rgba(24, 46, 65, 0.12);
+  gap: 1rem;
+  padding: 1.15rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #dbdfe4, #d3d9e0);
+  border: 1px solid rgba(107, 121, 135, 0.42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 10px 22px rgba(19, 36, 54, 0.1);
 }
 
 .vk-target-bar {
   justify-self: center;
-  width: min(100%, 880px);
-  min-height: 58px;
-  border-radius: 12px;
-  border: 2px solid #ff9800;
-  background: #ffe8c2;
+  width: min(100%, 900px);
+  min-height: 62px;
+  border-radius: 13px;
+  border: 2px solid #ef8f00;
+  background: #f7e2c0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  padding: 0.45rem 0.9rem;
+  gap: 0.55rem;
+  padding: 0.5rem 1rem;
+}
+
+.vk-target-icon {
+  font-size: 1.45rem;
+  line-height: 1;
 }
 
 .vk-target-label {
-  color: #d35200;
+  color: #d65200;
   font-family: "Baloo 2", "Trebuchet MS", sans-serif;
   font-weight: 800;
-  font-size: 1.9rem;
+  font-size: clamp(1.45rem, 2.6vw, 2rem);
   line-height: 1;
 }
 
 .vk-target-key {
-  min-width: 44px;
+  min-width: 52px;
   text-align: center;
   color: #fff;
-  background: linear-gradient(135deg, #ff7a1f, #ff4f1f);
+  background: linear-gradient(135deg, #ff6f19, #ff4b17);
   border-radius: 10px;
   font-family: "Baloo 2", "Trebuchet MS", sans-serif;
-  font-size: 1.65rem;
+  font-size: 1.9rem;
   font-weight: 900;
   line-height: 1;
-  padding: 0.35rem 0.55rem;
-  box-shadow: 0 8px 18px rgba(236, 94, 23, 0.3);
+  padding: 0.38rem 0.62rem;
+  box-shadow: 0 8px 18px rgba(236, 94, 23, 0.38);
 }
 
 .vk-layout-shell {
   display: grid;
-  grid-template-columns: 160px minmax(0, 1fr) 160px;
-  gap: 0.7rem;
+  grid-template-columns: 180px minmax(0, 1fr) 180px;
+  gap: 0.8rem;
   align-items: center;
 }
 
@@ -471,67 +476,98 @@ main {
 
 .vk-hand-card {
   border-radius: 16px;
-  border: 2px solid rgba(255, 146, 0, 0.9);
-  background: linear-gradient(180deg, rgba(255, 246, 233, 0.95), rgba(255, 240, 216, 0.95));
-  padding: 0.7rem 0.65rem;
+  border: 3px solid #ff9800;
+  background: linear-gradient(180deg, rgba(255, 246, 232, 0.98), rgba(255, 238, 212, 0.98));
+  padding: 0.8rem 0.68rem;
   display: grid;
-  gap: 0.35rem;
-  min-height: 232px;
+  gap: 0.38rem;
+  min-height: 296px;
   align-content: start;
 }
 
 .vk-hand-card.right {
-  border-color: rgba(160, 167, 175, 0.65);
-  background: linear-gradient(180deg, rgba(247, 250, 253, 0.95), rgba(240, 245, 250, 0.95));
+  border-color: rgba(181, 187, 194, 0.9);
+  background: linear-gradient(180deg, rgba(244, 246, 248, 0.98), rgba(237, 241, 245, 0.98));
 }
 
 .vk-hand-title {
   font-family: "Baloo 2", "Trebuchet MS", sans-serif;
-  font-size: 1rem;
+  font-size: 1.02rem;
   font-weight: 800;
-  color: #ff5900;
+  color: #ff5c00;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  margin-bottom: 0.1rem;
+  margin-bottom: 0.18rem;
 }
 
 .vk-hand-card.right .vk-hand-title {
-  color: #8894a2;
+  color: #8b97a4;
 }
 
 .vk-hand-row {
   border-radius: 10px;
-  padding: 0.35rem 0.45rem;
+  padding: 0.42rem 0.48rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #6c5a3f;
+  color: #61594d;
   font-weight: 700;
-  background: rgba(255, 255, 255, 0.58);
+  background: rgba(255, 255, 255, 0.62);
 }
 
 .vk-hand-row strong {
-  min-width: 22px;
+  min-width: 24px;
   text-align: center;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.85);
+  color: #7f8893;
 }
 
 .vk-hand-row.active {
-  background: rgba(255, 111, 49, 0.17);
+  background: rgba(255, 116, 49, 0.2);
   color: #f04b1d;
-  box-shadow: inset 0 0 0 2px rgba(255, 117, 53, 0.45);
+  box-shadow: inset 0 0 0 2px rgba(255, 117, 53, 0.5);
+}
+
+.vk-hand-row.active strong {
+  color: #ff4f1a;
+}
+
+.vk-hand-use {
+  margin-top: 0.15rem;
+  border-radius: 10px;
+  padding: 0.38rem 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 800;
+  color: rgba(122, 104, 74, 0.85);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.vk-hand-use strong {
+  color: #9b8676;
+}
+
+.vk-hand-use.active {
+  color: #e8501d;
+  background: rgba(255, 101, 41, 0.18);
+  box-shadow: inset 0 0 0 2px rgba(255, 101, 41, 0.4);
+}
+
+.vk-hand-use.active strong {
+  color: #ff4f1a;
 }
 
 .vk-board {
-  min-width: 900px;
+  min-width: 1010px;
   display: grid;
-  gap: 0.35rem;
+  gap: 0.32rem;
 }
 
 .vk-row {
   display: flex;
-  gap: 0.28rem;
+  gap: 0.3rem;
   justify-content: center;
   flex-wrap: nowrap;
 }
@@ -539,15 +575,15 @@ main {
 .vk-key {
   --w: 1;
   border-radius: 7px;
-  width: calc(58px * var(--w));
-  min-width: calc(58px * var(--w));
-  height: 58px;
-  padding: 0.2rem 0.35rem;
+  width: calc(60px * var(--w));
+  min-width: calc(60px * var(--w));
+  height: 60px;
+  padding: 0.25rem 0.35rem;
   font-weight: 700;
-  color: #12263b;
-  background: linear-gradient(180deg, #eff2f5, #e3e8ee);
-  border: 1px solid #9eaebc;
-  box-shadow: 0 2px 0 #9fb0bf;
+  color: #101e30;
+  background: linear-gradient(180deg, #e8edf2, #dce2e8);
+  border: 1px solid #9aabb9;
+  box-shadow: 0 2px 0 #95a6b4;
   cursor: pointer;
   transition: transform 0.08s ease, box-shadow 0.12s ease, background 0.2s ease, border-color 0.2s ease;
   position: relative;
@@ -557,95 +593,110 @@ main {
 
 .vk-key:hover {
   transform: translateY(-1px);
-  border-color: #8aa0b2;
+  border-color: #7f95a8;
 }
 
 .vk-key:disabled {
-  opacity: 0.72;
+  opacity: 0.9;
   cursor: not-allowed;
   transform: none;
 }
 
 .vk-key:active {
   transform: translateY(1px);
-  box-shadow: 0 1px 0 #9fb0bf;
+  box-shadow: 0 1px 0 #95a6b4;
 }
 
 .vk-key-main {
-  font-size: 1.05rem;
+  font-size: 1.9rem;
   line-height: 1;
+  font-family: "Baloo 2", "Trebuchet MS", sans-serif;
+}
+
+.vk-key:not(.next-key) .vk-key-main {
+  font-size: 1.28rem;
+  font-family: "Nunito", "Trebuchet MS", sans-serif;
+}
+
+.vk-key.word-key .vk-key-main {
+  font-size: 1.02rem;
+  font-family: "Nunito", "Trebuchet MS", sans-serif;
+}
+
+.vk-key.word-key.next-key .vk-key-main {
+  font-size: 1.12rem;
 }
 
 .vk-key.next-key {
-  color: #111;
-  background: linear-gradient(180deg, #ffb56a, #ff7a1f);
-  border-color: #ff6500;
-  box-shadow: 0 3px 0 #ea5d00, 0 0 24px rgba(255, 123, 31, 0.75);
+  color: #151515;
+  background: linear-gradient(180deg, #ffb56a, #ff6f1d);
+  border-color: #ff6400;
+  box-shadow: 0 3px 0 #e95a00, 0 0 24px rgba(255, 122, 26, 0.8), 0 0 0 2px rgba(255, 122, 26, 0.25);
 }
 
 .vk-key.decorative {
-  opacity: 0.84;
+  opacity: 0.95;
 }
 
 .finger-lp {
-  background-image: linear-gradient(180deg, #f4f6f8, #e8edf2);
+  background-image: linear-gradient(180deg, #e8edf2, #dce2e8);
 }
 
 .finger-lr {
-  background-image: linear-gradient(180deg, #f4f6f8, #e8edf2);
+  background-image: linear-gradient(180deg, #e8edf2, #dce2e8);
 }
 
 .finger-lm {
-  background-image: linear-gradient(180deg, #f4f6f8, #e8edf2);
+  background-image: linear-gradient(180deg, #e8edf2, #dce2e8);
 }
 
 .finger-li {
-  background-image: linear-gradient(180deg, #f4f6f8, #e8edf2);
+  background-image: linear-gradient(180deg, #e8edf2, #dce2e8);
 }
 
 .finger-lt {
-  background: linear-gradient(180deg, #eefbff, #d5f1fd);
+  background-image: linear-gradient(180deg, #e8edf2, #dce2e8);
 }
 
 .finger-rt {
-  background: linear-gradient(180deg, #eef7ff, #d8e9ff);
+  background-image: linear-gradient(180deg, #e8edf2, #dce2e8);
 }
 
 .finger-ri {
-  background: linear-gradient(180deg, #f3f2ff, #dedbff);
+  background-image: linear-gradient(180deg, #e8edf2, #dce2e8);
 }
 
 .finger-rm {
-  background: linear-gradient(180deg, #faf1ff, #ebdcff);
+  background-image: linear-gradient(180deg, #e8edf2, #dce2e8);
 }
 
 .finger-rr {
-  background: linear-gradient(180deg, #fff1fb, #ffdff3);
+  background-image: linear-gradient(180deg, #e8edf2, #dce2e8);
 }
 
 .finger-rp {
-  background: linear-gradient(180deg, #fff2f8, #ffdeed);
+  background-image: linear-gradient(180deg, #e8edf2, #dce2e8);
 }
 
 .virtual-keyboard.theme-story,
 .virtual-keyboard.theme-treasure {
-  background: linear-gradient(180deg, #f6efe3, #edf2f7);
+  background: linear-gradient(180deg, #dbdfe4, #d3d9e0);
 }
 
 .virtual-keyboard.theme-emoji,
 .virtual-keyboard.theme-color {
-  background: linear-gradient(180deg, #f5eaf2, #edf2f7);
+  background: linear-gradient(180deg, #dbdfe4, #d3d9e0);
 }
 
 .virtual-keyboard.theme-math,
 .virtual-keyboard.theme-ladder {
-  background: linear-gradient(180deg, #eaeaf8, #edf2f7);
+  background: linear-gradient(180deg, #dbdfe4, #d3d9e0);
 }
 
 .virtual-keyboard.theme-boss,
 .virtual-keyboard.theme-rhythm,
 .virtual-keyboard.theme-space {
-  background: linear-gradient(180deg, #e8edf6, #edf2f7);
+  background: linear-gradient(180deg, #dbdfe4, #d3d9e0);
 }
 
 input,
@@ -899,14 +950,14 @@ textarea {
   }
 
   .vk-key {
-    width: calc(39px * var(--w));
-    min-width: calc(39px * var(--w));
-    height: 38px;
-    font-size: 0.84rem;
+    width: calc(48px * var(--w));
+    min-width: calc(48px * var(--w));
+    height: 46px;
+    font-size: 0.9rem;
   }
 
   .vk-board {
-    min-width: 760px;
+    min-width: 860px;
   }
 
   .vk-layout-shell {
@@ -921,6 +972,15 @@ textarea {
 
   .vk-hand-title {
     grid-column: 1 / -1;
+  }
+
+  .vk-target-label {
+    font-size: 1.25rem;
+  }
+
+  .vk-target-key {
+    font-size: 1.35rem;
+    min-width: 42px;
   }
 }
 
