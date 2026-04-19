@@ -215,6 +215,34 @@ export default function GameArena({
     metrics.mistakeChars
   ]);
 
+  const totalBeginnerSteps = BEGINNER_KEY_STEPS.length;
+  const completedBeginnerSteps = Math.min(
+    beginnerTraining.step + (beginnerTraining.correct >= BEGINNER_STEP_TARGET ? 1 : 0),
+    totalBeginnerSteps
+  );
+  const overallBeginnerProgress = Math.round((completedBeginnerSteps / totalBeginnerSteps) * 100);
+  const currentStepProgress = Math.min(
+    Math.round((beginnerTraining.correct / BEGINNER_STEP_TARGET) * 100),
+    100
+  );
+
+  const beginnerChecklist = useMemo(() => {
+    return BEGINNER_KEY_STEPS.map((pair, index) => {
+      const isLastStep = index === totalBeginnerSteps - 1;
+      const isDone =
+        index < beginnerTraining.step ||
+        (index === beginnerTraining.step &&
+          (beginnerTraining.correct >= BEGINNER_STEP_TARGET || (isLastStep && beginnerTraining.correct >= BEGINNER_STEP_TARGET)));
+      const isCurrent = !isDone && index === beginnerTraining.step;
+
+      return {
+        index,
+        pair,
+        status: isDone ? "done" : isCurrent ? "current" : "pending"
+      };
+    });
+  }, [beginnerTraining.correct, beginnerTraining.step, totalBeginnerSteps]);
+
   const visiblePrompt = isPromptHidden
     ? challengeMeta.hiddenDisplay || "????"
     : displayPrompt;
@@ -535,6 +563,38 @@ export default function GameArena({
           <p className="target-text">{visiblePrompt}</p>
           {promptHint ? <p className="prompt-hint">Hint: {promptHint}</p> : null}
           {modeLabel ? <p className="mode-note">{modeLabel}</p> : null}
+          {isBeginnerCurriculum ? (
+            <div className="beginner-curriculum-card">
+              <div className="beginner-progress-head">
+                <strong>Beginner Keyboard Curriculum</strong>
+                <span>{overallBeginnerProgress}% Complete</span>
+              </div>
+              <div className="beginner-progress-track">
+                <div className="beginner-progress-fill" style={{ width: `${overallBeginnerProgress}%` }} />
+              </div>
+              <div className="beginner-step-progress-row">
+                <span>Current Step Progress</span>
+                <span>
+                  {Math.min(beginnerTraining.correct, BEGINNER_STEP_TARGET)}/{BEGINNER_STEP_TARGET}
+                </span>
+              </div>
+              <div className="beginner-step-track">
+                <div className="beginner-step-fill" style={{ width: `${currentStepProgress}%` }} />
+              </div>
+              <div className="beginner-checklist">
+                {beginnerChecklist.map((step) => (
+                  <div key={step.index} className={`beginner-step-item ${step.status}`}>
+                    <span className="beginner-step-state">
+                      {step.status === "done" ? "Done" : step.status === "current" ? "Now" : "Next"}
+                    </span>
+                    <span className="beginner-step-text">
+                      Step {step.index + 1}: {step.pair[0].toUpperCase()} + {step.pair[1].toUpperCase()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
           <input
             ref={inputRef}
             type="text"

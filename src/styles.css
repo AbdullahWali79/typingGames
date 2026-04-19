@@ -422,6 +422,103 @@ main {
   font-weight: 800;
 }
 
+.beginner-curriculum-card {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.75rem;
+  border-radius: 14px;
+  background: linear-gradient(130deg, rgba(255, 255, 255, 0.95), rgba(235, 251, 255, 0.95));
+  border: 1px solid rgba(36, 117, 156, 0.2);
+}
+
+.beginner-progress-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.7rem;
+  align-items: center;
+  flex-wrap: wrap;
+  color: #184b6d;
+  font-weight: 800;
+}
+
+.beginner-progress-track,
+.beginner-step-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(33, 92, 126, 0.15);
+  overflow: hidden;
+}
+
+.beginner-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(120deg, #34c47b, #1a9a61);
+}
+
+.beginner-step-progress-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #21526f;
+}
+
+.beginner-step-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(120deg, #ff9a3a, #ff6c3a);
+}
+
+.beginner-checklist {
+  margin-top: 0.25rem;
+  display: grid;
+  gap: 0.38rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.beginner-step-item {
+  display: grid;
+  gap: 0.18rem;
+  border-radius: 10px;
+  padding: 0.42rem 0.5rem;
+  border: 1px solid rgba(39, 88, 114, 0.16);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.beginner-step-item.done {
+  border-color: rgba(21, 140, 84, 0.35);
+  background: rgba(216, 255, 236, 0.85);
+}
+
+.beginner-step-item.current {
+  border-color: rgba(255, 133, 52, 0.45);
+  background: rgba(255, 240, 216, 0.92);
+}
+
+.beginner-step-state {
+  font-size: 0.74rem;
+  font-weight: 900;
+  color: #184a69;
+  text-transform: uppercase;
+}
+
+.beginner-step-item.done .beginner-step-state {
+  color: #1d8a58;
+}
+
+.beginner-step-item.current .beginner-step-state {
+  color: #da5a19;
+}
+
+.beginner-step-text {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #214d69;
+}
+
 .mode-selector {
   display: flex;
   flex-wrap: wrap;
