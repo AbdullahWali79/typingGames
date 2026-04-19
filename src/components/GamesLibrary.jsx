@@ -13,6 +13,11 @@ export default function GamesLibrary({
         <div>
           <h2>Games Library</h2>
           <p>Choose a game and type your way to a new high score.</p>
+          {selectedDifficulty === "Beginner" ? (
+            <p className="curriculum-note">
+              Beginner mode runs step-by-step keyboard practice (2 keys at a time) across all games.
+            </p>
+          ) : null}
         </div>
         <DifficultySelector value={selectedDifficulty} onChange={onDifficultyChange} />
       </div>

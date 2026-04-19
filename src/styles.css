@@ -313,6 +313,18 @@ main {
   font-size: clamp(1.5rem, 3vw, 2.2rem);
 }
 
+.curriculum-note {
+  margin-top: 0.45rem;
+  width: fit-content;
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #1f5a7f;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(31, 90, 127, 0.2);
+}
+
 .difficulty-selector {
   display: flex;
   gap: 0.4rem;

@@ -13,7 +13,9 @@ const defaultState = {
   combo: 0,
   maxCombo: 0,
   reducedMotion: false,
-  soundEnabled: true
+  soundEnabled: true,
+  beginnerKeyStep: 0,
+  beginnerStepCorrect: 0
 };
 
 export function getProgressSnapshot() {
@@ -105,6 +107,21 @@ export function setSoundEnabled(enabled) {
 export function getSoundEnabled() {
   const state = readState();
   return state.soundEnabled !== false;
+}
+
+export function getBeginnerTraining() {
+  const state = readState();
+  return {
+    step: Number.isFinite(state.beginnerKeyStep) ? state.beginnerKeyStep : 0,
+    correct: Number.isFinite(state.beginnerStepCorrect) ? state.beginnerStepCorrect : 0
+  };
+}
+
+export function saveBeginnerTraining(step, correct) {
+  const state = readState();
+  state.beginnerKeyStep = Math.max(0, Math.floor(step));
+  state.beginnerStepCorrect = Math.max(0, Math.floor(correct));
+  writeState(state);
 }
 
 // Auto-save game progress

@@ -28,6 +28,31 @@ export const DIFFICULTY_LEVELS = {
   }
 };
 
+export const BEGINNER_KEY_STEPS = [
+  ["f", "j"],
+  ["d", "k"],
+  ["s", "l"],
+  ["a", "g"],
+  ["g", "h"],
+  ["r", "u"],
+  ["e", "i"],
+  ["w", "o"],
+  ["q", "p"],
+  ["t", "y"],
+  ["v", "n"],
+  ["c", "m"],
+  ["x", "b"],
+  ["z", "c"],
+  ["n", "m"],
+  ["1", "2"],
+  ["3", "4"],
+  ["5", "6"],
+  ["7", "8"],
+  ["9", "0"]
+];
+
+export const BEGINNER_STEP_TARGET = 4;
+
 export const ENCOURAGEMENTS = [
   "Great job!",
   "Awesome!",

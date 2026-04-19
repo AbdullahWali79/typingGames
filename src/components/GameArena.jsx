@@ -7,7 +7,12 @@ import { getHandsEnabled } from "../handsSettings";
 import ComboDisplay from "./ComboDisplay";
 import Confetti from "./Confetti";
 import TutorialModal from "./TutorialModal";
-import { DIFFICULTY_LEVELS, ENCOURAGEMENTS } from "../data";
+import {
+  DIFFICULTY_LEVELS,
+  ENCOURAGEMENTS,
+  BEGINNER_KEY_STEPS,
+  BEGINNER_STEP_TARGET
+} from "../data";
 import {
   buildGameChallenge,
   calculateAccuracy,
@@ -24,7 +29,9 @@ import {
   autoSaveProgress,
   getAutoSavedProgress,
   clearAutoSave,
-  getReducedMotion
+  getReducedMotion,
+  getBeginnerTraining,
+  saveBeginnerTraining
 } from "../storage";
 import {
   playTypeSound,
@@ -77,12 +84,16 @@ export default function GameArena({
   const [newAchievements, setNewAchievements] = useState([]);
   const [justUnlockedAchievement, setJustUnlockedAchievement] = useState(false);
   const [lastPressedChar, setLastPressedChar] = useState(null);
+  const [beginnerTraining, setBeginnerTraining] = useState(() => sanitizeBeginnerTraining(getBeginnerTraining()));
   
   const inputRef = useRef(null);
   const metricsRef = useRef(metrics);
   const promptIssuedAtRef = useRef(Date.now());
   const reducedMotion = useRef(getReducedMotion());
   const handsEnabled = useRef(getHandsEnabled());
+  const isBeginnerCurriculum = difficulty === "Beginner";
+  const currentBeginnerStep = Math.min(beginnerTraining.step, BEGINNER_KEY_STEPS.length - 1);
+  const currentBeginnerPair = BEGINNER_KEY_STEPS[currentBeginnerStep] ?? ["f", "j"];
 
   useEffect(() => {
     metricsRef.current = metrics;
@@ -173,6 +184,9 @@ export default function GameArena({
   }, [metrics.correctPrompts, status]);
 
   const modeLabel = useMemo(() => {
+    if (isBeginnerCurriculum) {
+      return `Step ${currentBeginnerStep + 1}/${BEGINNER_KEY_STEPS.length} • ${currentBeginnerPair[0].toUpperCase()} + ${currentBeginnerPair[1].toUpperCase()} • ${Math.min(beginnerTraining.correct, BEGINNER_STEP_TARGET)}/${BEGINNER_STEP_TARGET}`;
+    }
     if (game.promptStyle === "treasure") {
       return `Treasure unlocked: ${metrics.correctPrompts}/12`;
     }
@@ -189,16 +203,28 @@ export default function GameArena({
       return `Story chapter ${challengeMeta.chapter ?? 1}`;
     }
     return "";
-  }, [challengeMeta.chapter, challengeMeta.isBossRound, game.promptStyle, metrics.correctPrompts, metrics.mistakeChars]);
+  }, [
+    beginnerTraining.correct,
+    challengeMeta.chapter,
+    challengeMeta.isBossRound,
+    currentBeginnerPair,
+    currentBeginnerStep,
+    game.promptStyle,
+    isBeginnerCurriculum,
+    metrics.correctPrompts,
+    metrics.mistakeChars
+  ]);
 
   const visiblePrompt = isPromptHidden
     ? challengeMeta.hiddenDisplay || "????"
     : displayPrompt;
 
   function resetSession() {
+    const storedTraining = sanitizeBeginnerTraining(getBeginnerTraining());
+    setBeginnerTraining(storedTraining);
     setStatus("idle");
     setTimeLeft(settings.gameTime);
-    applyNextChallenge(0, 0);
+    applyNextChallenge(0, 0, storedTraining);
     setEntry("");
     setFeedback("Type what you see and press Enter.");
     setMetrics(createInitialMetrics());
@@ -227,9 +253,11 @@ export default function GameArena({
   }
 
   function actuallyStartSession() {
+    const storedTraining = sanitizeBeginnerTraining(getBeginnerTraining());
+    setBeginnerTraining(storedTraining);
     setStatus("running");
     setTimeLeft(settings.gameTime);
-    applyNextChallenge(0, 0);
+    applyNextChallenge(0, 0, storedTraining);
     setEntry("");
     setFeedback("You can do this!");
     setMetrics(createInitialMetrics());
@@ -289,6 +317,26 @@ export default function GameArena({
     const gain = baseGain + comboBonus + rhythmBonus + bossBonus + memoryBonus;
     const nextCorrectPrompts = currentMetrics.correctPrompts + (isCorrect ? 1 : 0);
     const nextMistakeChars = currentMetrics.mistakeChars + mistakes;
+    let nextTraining = beginnerTraining;
+
+    if (isBeginnerCurriculum && isCorrect) {
+      const lastStep = BEGINNER_KEY_STEPS.length - 1;
+      let nextStep = currentBeginnerStep;
+      let nextCorrect = beginnerTraining.correct + 1;
+
+      if (nextCorrect >= BEGINNER_STEP_TARGET) {
+        if (currentBeginnerStep < lastStep) {
+          nextStep = currentBeginnerStep + 1;
+          nextCorrect = 0;
+        } else {
+          nextCorrect = BEGINNER_STEP_TARGET;
+        }
+      }
+
+      nextTraining = sanitizeBeginnerTraining({ step: nextStep, correct: nextCorrect });
+      setBeginnerTraining(nextTraining);
+      saveBeginnerTraining(nextTraining.step, nextTraining.correct);
+    }
 
     setMetrics((prev) => ({
       ...prev,
@@ -302,6 +350,11 @@ export default function GameArena({
 
     if (isCorrect && challengeMeta.isBossRound) {
       setFeedback("Boss smashed! Amazing typing!");
+    } else if (isBeginnerCurriculum && isCorrect && nextTraining.step > currentBeginnerStep) {
+      const pair = BEGINNER_KEY_STEPS[nextTraining.step];
+      setFeedback(`Great! Next keys: ${pair[0].toUpperCase()} + ${pair[1].toUpperCase()}`);
+    } else if (isBeginnerCurriculum && isCorrect && nextTraining.step === BEGINNER_KEY_STEPS.length - 1 && nextTraining.correct >= BEGINNER_STEP_TARGET) {
+      setFeedback("Excellent! Beginner keyboard practice is complete.");
     } else if (isCorrect && comboBonus > 0) {
       setFeedback(`${randomItem(ENCOURAGEMENTS)} ${newCombo}x Combo!`);
     } else if (isCorrect && rhythmBonus > 0) {
@@ -313,7 +366,7 @@ export default function GameArena({
     }
     
     setEntry("");
-    applyNextChallenge(nextCorrectPrompts, nextMistakeChars);
+    applyNextChallenge(nextCorrectPrompts, nextMistakeChars, nextTraining);
   }
 
   function finishSession() {
@@ -369,7 +422,24 @@ export default function GameArena({
     inputRef.current?.focus();
   }
 
-  function applyNextChallenge(cleared, mistakeChars) {
+  function applyNextChallenge(cleared, mistakeChars, trainingOverride = beginnerTraining) {
+    if (isBeginnerCurriculum) {
+      const training = sanitizeBeginnerTraining(trainingOverride);
+      const stepIndex = Math.min(training.step, BEGINNER_KEY_STEPS.length - 1);
+      const pair = BEGINNER_KEY_STEPS[stepIndex] ?? ["f", "j"];
+      const target = createBeginnerPrompt(pair, 5);
+
+      setTargetPrompt(target);
+      setDisplayPrompt(target);
+      setPromptHint(
+        `Beginner keyboard training: practice ${pair[0].toUpperCase()} + ${pair[1].toUpperCase()} (${Math.min(training.correct, BEGINNER_STEP_TARGET)}/${BEGINNER_STEP_TARGET})`
+      );
+      setChallengeMeta({});
+      setIsPromptHidden(false);
+      promptIssuedAtRef.current = Date.now();
+      return;
+    }
+
     const challenge = buildGameChallenge(game, difficulty, { cleared, mistakeChars });
     setTargetPrompt(challenge.target);
     setDisplayPrompt(challenge.display);
@@ -550,4 +620,26 @@ function normalizeTypedValue(value) {
     .replace(/[^a-z0-9\s]/g, "")
     .trim()
     .replace(/\s+/g, " ");
+}
+
+function createBeginnerPrompt(pair, size) {
+  const [first, second] = pair;
+  const chars = [first, second];
+
+  while (chars.length < size) {
+    chars.push(Math.random() > 0.5 ? first : second);
+  }
+
+  for (let i = chars.length - 1; i > 0; i -= 1) {
+    const swapIndex = Math.floor(Math.random() * (i + 1));
+    [chars[i], chars[swapIndex]] = [chars[swapIndex], chars[i]];
+  }
+
+  return chars.join("");
+}
+
+function sanitizeBeginnerTraining(training) {
+  const step = Number.isFinite(training?.step) ? Math.max(0, Math.floor(training.step)) : 0;
+  const correct = Number.isFinite(training?.correct) ? Math.max(0, Math.floor(training.correct)) : 0;
+  return { step, correct };
 }
