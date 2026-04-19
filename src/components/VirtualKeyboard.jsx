@@ -214,6 +214,7 @@ export default function VirtualKeyboard({
 
   const rows = layout === "numeric" ? NUMERIC_ROWS : KEYBOARD_101;
   const normalizedHintKey = normalizeHintKey(nextHintChar);
+  const activeKeyId = getActiveKeyId(rows, normalizedHintKey);
   const activeFinger = normalizedHintKey ? getFingerId(normalizedHintKey) : "";
   const hintLabel = formatHintLabel(normalizedHintKey);
   const activeSide = activeFinger.startsWith("l") ? "left" : activeFinger.startsWith("r") ? "right" : "";
@@ -284,9 +285,11 @@ export default function VirtualKeyboard({
           <div className="vk-board">
             {rows.map((row, rowIndex) => (
               <div className="vk-row" key={`row-${rowIndex}`}>
-                {row.map((key) =>
+                {row.map((key, keyIndex) =>
                   renderKey({
                     key,
+                    keyId: `${rowIndex}-${keyIndex}`,
+                    activeKeyId,
                     disabled,
                     onInput,
                     onBackspace,
@@ -321,10 +324,9 @@ export default function VirtualKeyboard({
   );
 }
 
-function renderKey({ key, disabled, onInput, onBackspace, onSpace, onEnter, normalizedHintKey }) {
+function renderKey({ key, keyId, activeKeyId, disabled, onInput, onBackspace, onSpace, onEnter }) {
   const fingerId = getFingerId(key.fingerKey ?? key.value ?? key.action ?? "");
-  const keyHintSource = key.value || key.fingerKey || "";
-  const isNext = Boolean(normalizedHintKey) && normalizedHintKey === normalizeHintKey(keyHintSource);
+  const isNext = keyId === activeKeyId;
   const isDecor = key.decorative === true;
   const isWordKey = String(key.label ?? "").length > 1;
 
@@ -394,6 +396,48 @@ function normalizeHintKey(value) {
     return "space";
   }
   return SHIFTED_KEY_MAP[first] ?? lower;
+}
+
+function getKeyMatchToken(key) {
+  if (key.action === "input") {
+    return normalizeHintKey(key.value);
+  }
+  if (key.action === "space") {
+    return "space";
+  }
+  if (key.action === "enter") {
+    return "enter";
+  }
+  if (key.action === "tab") {
+    return "tab";
+  }
+  return "";
+}
+
+function getActiveKeyId(rows, normalizedHintKey) {
+  if (!normalizedHintKey) {
+    return "";
+  }
+
+  for (let rowIndex = 0; rowIndex < rows.length; rowIndex += 1) {
+    const row = rows[rowIndex];
+    for (let keyIndex = 0; keyIndex < row.length; keyIndex += 1) {
+      const key = row[keyIndex];
+      if (isHighlightMatch(key, normalizedHintKey)) {
+        return `${rowIndex}-${keyIndex}`;
+      }
+    }
+  }
+
+  return "";
+}
+
+function isHighlightMatch(key, normalizedHintKey) {
+  if (key.decorative) {
+    return false;
+  }
+  const token = getKeyMatchToken(key);
+  return Boolean(token) && token === normalizedHintKey;
 }
 
 function formatHintLabel(hintKey) {
