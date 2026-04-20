@@ -224,6 +224,7 @@ main {
   box-shadow: 0 14px 28px rgba(18, 47, 72, 0.18);
   animation: heroOrbFloat 4.2s ease-in-out infinite;
   isolation: isolate;
+  transition: box-shadow 0.35s ease, filter 0.35s ease;
 }
 
 .hero-visual::before {
@@ -262,14 +263,22 @@ main {
 
 .hero-visual:hover {
   animation-duration: 2.8s;
+  filter: saturate(1.12) brightness(1.04);
+  box-shadow: 0 20px 40px rgba(18, 47, 72, 0.28), 0 0 0 8px rgba(255, 111, 25, 0.14);
 }
 
 .hero-visual:hover::before {
   animation-duration: 8s;
+  border-color: rgba(255, 111, 25, 0.92);
+}
+
+.hero-visual:hover::after {
+  animation-duration: 1.8s;
+  opacity: 0.95;
 }
 
 .hero-visual:hover img {
-  animation-duration: 2.8s, 5.6s;
+  animation: heroOrbGlow 2.4s ease-in-out infinite, heroOrbZoom 4.8s ease-in-out infinite, heroOrbHoverFlash 1.2s ease-in-out infinite;
 }
 
 @keyframes heroOrbFloat {
@@ -320,6 +329,16 @@ main {
   50% {
     opacity: 0.85;
     transform: rotate(8deg);
+  }
+}
+
+@keyframes heroOrbHoverFlash {
+  0%,
+  100% {
+    filter: saturate(1) brightness(1);
+  }
+  50% {
+    filter: saturate(1.22) brightness(1.1);
   }
 }
 
